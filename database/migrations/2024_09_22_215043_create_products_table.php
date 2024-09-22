@@ -11,9 +11,40 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string("name");
+            $table->timestamps();
+        });
+        Schema::create('subcategories', function (Blueprint $table) {
+            $table->id();
+            $table->string("name");
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->timestamps();
+        });
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('description');
+            $table->integer('stock');
+            $table->decimal('price', 9, 3);
+            $table->string('color');
+            $table->string('size');
             $table->timestamps();
+        });
+        Schema::create('product_category', function (Blueprint $table) {
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnUpdate()->cascadeOnDelete();
+        });
+        Schema::create('product_subcategory', function (Blueprint $table) {
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('subcategory_id');
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('subcategory_id')->references('id')->on('subcategories')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -22,6 +53,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('product_category');
+        Schema::dropIfExists('product_subcategory');
+        Schema::dropIfExists('subcategories');
         Schema::dropIfExists('products');
+        Schema::dropIfExists('categories');
     }
 };
