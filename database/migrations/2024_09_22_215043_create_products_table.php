@@ -50,7 +50,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('image_url');
-            $table->timestamps();
         });
     }
 
