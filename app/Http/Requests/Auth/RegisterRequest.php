@@ -15,7 +15,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::guest();
+        return true;
     }
 
     /**
