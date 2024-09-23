@@ -24,8 +24,8 @@ return new class extends Migration
             $table->string('phone_number');
             $table->unsignedBigInteger('governorate_id');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('governorate_id')->references('id')->on('governorates'); // what will happend on delete and update?
-            $table->foreign('user_id')->references('id')->on('users'); // what will happend on delete and update?
+            $table->foreign('governorate_id')->references('id')->on('governorates')->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }
