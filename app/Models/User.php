@@ -3,7 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Orders\Order;
+use App\Models\Roles\UserRole;
+use App\Models\Shipping\ShippingDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -11,6 +17,29 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
+
+    // Roles
+    public function roles(): BelongsTo
+    {
+        return $this->belongsTo(UserRole::class);
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('name', $role)->exists();
+    }
+
+    // Orders
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    // Shipping
+    public function shippingDetails(): HasMany
+    {
+        return $this->hasMany(ShippingDetails::class);
+    }
 
     /**
      * The attributes that are mass assignable.

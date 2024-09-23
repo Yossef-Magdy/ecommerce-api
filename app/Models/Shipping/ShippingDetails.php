@@ -6,6 +6,7 @@ use App\Models\Governorate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShippingDetails extends Model
 {
@@ -23,12 +24,12 @@ class ShippingDetails extends Model
         'user_id',
     ];
 
-    public function governorate()
+    public function governorate(): BelongsTo
     {
         return $this->belongsTo(Governorate::class, 'governorate_id', 'id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }

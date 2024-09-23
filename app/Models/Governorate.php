@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Shipping\ShippingDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Governorate extends Model
 {
@@ -16,7 +17,7 @@ class Governorate extends Model
 
     protected $fillable = ['name'];
 
-    public function shippingDetails()
+    public function shippingDetails(): HasMany
     {
         return $this->hasMany(ShippingDetails::class, 'governorate_id', 'id');
     }
