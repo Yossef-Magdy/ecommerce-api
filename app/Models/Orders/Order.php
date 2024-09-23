@@ -2,7 +2,9 @@
 
 namespace App\Models\Orders;
 
+use App\Models\Shipping\Shipping;
 use App\Models\User;
+use App\Models\Coupon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,5 +28,15 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function shipping()
+    {
+        return $this->hasOne(Shipping::class);
+    }
+
+    public function coupon()
+    {
+        return $this->hasOne(Coupon::class);
     }
 }
