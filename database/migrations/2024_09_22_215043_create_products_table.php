@@ -11,7 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string("name");
@@ -29,7 +28,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->integer('stock');
-            $table->decimal('price', 9, 3);
+            $table->decimal('price', 10, 2);
             $table->string('color');
             $table->string('size');
             $table->timestamps();
