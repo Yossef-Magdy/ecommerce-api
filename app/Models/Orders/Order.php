@@ -5,6 +5,7 @@ namespace App\Models\Orders;
 use App\Models\Shipping\Shipping;
 use App\Models\User;
 use App\Models\Coupon;
+use App\Models\Payments\Payment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,5 +39,10 @@ class Order extends Model
     public function coupon()
     {
         return $this->hasOne(Coupon::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }
