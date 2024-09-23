@@ -57,6 +57,22 @@ return [
             'throw' => false,
         ],
 
+        // Product filesystem
+        'product_cover'  => [
+            'driver' => 'local',
+            'root' => storage_path('cover'),
+            'url' => env('APP_URL').'/cover',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'product_images'  => [
+            'driver' => 'local',
+            'root' => storage_path('images'),
+            'url' => env('APP_URL').'/images',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
     ],
 
     /*

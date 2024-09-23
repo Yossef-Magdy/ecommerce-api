@@ -50,7 +50,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('image_url');
-            $table->timestamps();
         });
     }
 
@@ -62,8 +61,8 @@ return new class extends Migration
         Schema::dropIfExists('product_category');
         Schema::dropIfExists('product_subcategory');
         Schema::dropIfExists('subcategories');
-        Schema::dropIfExists('products');
         Schema::dropIfExists('product_images');
+        Schema::dropIfExists('products');
         Schema::dropIfExists('categories');
     }
 };
