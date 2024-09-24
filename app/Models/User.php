@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Orders\Order;
+use App\Models\Products\ProductReview;
 use App\Models\Roles\UserRole;
 use App\Models\Shipping\ShippingDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,11 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
     }
 
     // Shipping
