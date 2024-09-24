@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\Orders\Order;
 use App\Models\Products\ProductReview;
+use App\Models\Roles\Permission;
 use App\Models\Roles\UserRole;
 use App\Models\Shipping\ShippingDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,17 @@ class User extends Authenticatable
     public function hasRole(string $role): bool
     {
         return $this->roles()->where('roles.name', $role)->exists();
+    }
+
+    // permissions
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id');
+    }
+
+    public function hasPermission(string $role): bool
+    {
+        return $this->permissions()->where('permissions.name', $role)->exists();
     }
 
     // Orders

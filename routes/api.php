@@ -31,6 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
                     }),
                 ];
             }),
+            'permissions' => $user->roles->flatMap(function ($role) {
+                return $role->permissions->pluck('name');
+            })->unique()->values()->all(),
+            'hasPermissionEdit' => $user->hasPermission('edit'),
         ];
     });
     Route::post('/logout', [AuthController::class, 'logout']);
