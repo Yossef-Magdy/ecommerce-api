@@ -16,18 +16,29 @@ Route::apiResource('/reviews', ProductReviewsController::class)->only(['index', 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        $user = $request->user()->load('roles.permissions');
+
+        return [
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'roles' => $user->roles->map(function ($role) {
+                return [
+                    'name' => $role->name,
+                    'permissions' => $role->permissions->map(function ($permission) {
+                        return $permission->name;
+                    }),
+                ];
+            }),
+        ];
     });
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Admin-only routes
     Route::middleware('can:manage-products')->group(function () {
-        Route::post('/products', [ProductsController::class, 'store']);
-        Route::put('/products/{product}', [ProductsController::class, 'update']);
-        Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
+        Route::apiResource('/products', ProductsController::class)->only(['store', 'update', 'destroy']);
     });
-    
-    Route::post('/reviews', [ProductReviewsController::class, 'store']);
-    Route::put('/reviews/{product}', [ProductReviewsController::class, 'update']);
-    Route::delete('/reviews/{product}', [ProductReviewsController::class, 'destroy']);
+
+    Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
 });

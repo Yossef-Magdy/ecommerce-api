@@ -36,7 +36,7 @@ class ProductsController extends Controller
         }
         return response()->json([
             'message' => 'Product retrieved successfully',
-            'product' => ProductDetailsResource::make($product),
+            'data' => ProductDetailsResource::make($product),
         ]);
     }
 
@@ -64,7 +64,7 @@ class ProductsController extends Controller
 
         return response()->json([
             'message' => 'Product created successfully',
-            'product' => $product,
+            'data' => $product,
         ], 201);
     }
 
@@ -116,7 +116,7 @@ class ProductsController extends Controller
 
         return response()->json([
             'message' => 'Product updated successfully',
-            'product' => ProductDetailsResource::make($product),
+            'data' => ProductDetailsResource::make($product),
         ]);
     }
 

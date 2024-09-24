@@ -10,6 +10,7 @@ use App\Models\Roles\UserRole;
 use App\Models\Shipping\ShippingDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,14 +21,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens;
 
     // Roles
-    public function roles(): BelongsTo
+    public function roles(): BelongsToMany
     {
-        return $this->belongsTo(UserRole::class);
+        return $this->belongsToMany(UserRole::class, 'user_role', 'user_id', 'role_id');
     }
 
     public function hasRole(string $role): bool
     {
-        return $this->roles()->where('name', $role)->exists();
+        return $this->roles()->where('roles.name', $role)->exists();
     }
 
     // Orders
