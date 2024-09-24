@@ -22,10 +22,8 @@ return new class extends Migration
             $table->string('apartment');
             $table->string('postal_code');
             $table->string('phone_number');
-            $table->unsignedBigInteger('governorate_id');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('governorate_id')->references('id')->on('governorates')->cascadeOnUpdate();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('governorate_id')->constrained('governorates')->cascadeOnUpdate();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }

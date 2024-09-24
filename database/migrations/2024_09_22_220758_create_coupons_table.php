@@ -24,8 +24,8 @@ return new class extends Migration
 
         Schema::create('orders_coupon', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('coupon_id')->constrained();
-            $table->foreignId('order_id')->constrained();
+            $table->foreignId('coupon_id')->constrained('coupons');
+            $table->foreignId('order_id')->constrained('orders');
         });
 
         Schema::create('products_discount', function (Blueprint $table) {
@@ -34,7 +34,7 @@ return new class extends Migration
            $table->string('discount_type');
            $table->integer('discount_value');
            $table->date('expiry_date');
-           $table->foreignId('product_id')->constrained(); 
+           $table->foreignId('product_id')->constrained('products'); 
            $table->timestamps();
         });
     }
