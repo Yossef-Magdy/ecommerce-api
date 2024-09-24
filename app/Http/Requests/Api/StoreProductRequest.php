@@ -28,7 +28,11 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name', 'description', 'stock', 'price', 'color', 'size', 'cover_image'
+            'name',
+            'description',
+            'cover_image',
+            'product_images',
+            'attributes'
         ];
     }
 
@@ -37,17 +41,17 @@ class StoreProductRequest extends FormRequest
         return [
             'name.required' => 'Product name is required',
             'description.required' => 'Product description is required',
-            'stock.required' => 'Product stock is required',
-            'stock.integer' => 'Product stock should be an integer',
-            'price.required' => 'Product price is required',
-            'price.numeric' => 'Product price should be a number',
-            'color.required' => 'Product color is required',
-            'color.string' => 'Product color should be a string',
-            'size.required' => 'Product size is required',
-            'size.in' => 'Product size must be one of: m, l, xl, xxl, xxxl',
             'cover_image.image' => 'Product cover image should be an image',
             'cover_image.mimes' => 'Product cover image must be a file of type: jpg, png.',
             'cover_image.max' => 'Product cover image may not be greater than 5 MB.',
+            'product_images.image' => 'Product images should be an image',
+            'product_images.mimes' => 'Product images must be a file of type: jpg, png.',
+            'product_images.max' => 'Product images may not be greater than 5 MB.',
+            'attributes.required' => 'Product attributes are required',
+            'attributes.array' => 'Product attributes must be an array',
+            'attributes.*.name.required' => 'Product attribute name is required',
+            'attributes.*.options.required' => 'Product attribute value is required',
+            'attributes.*.options.array' => 'Product attribute values must be an array',
         ];
     }
 
