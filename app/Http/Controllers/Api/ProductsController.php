@@ -9,7 +9,9 @@ use App\Http\Resources\ProductDetailsResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Products\Product;
 use App\Models\Products\ProductImage;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
@@ -120,7 +122,32 @@ class ProductsController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->delete();
+        // Start a new database transaction
+        DB::beginTransaction();
+
+        try {
+            // Delete the product images
+            if ($product->images) {
+                foreach ($product->images as $image) {
+                    Storage::disk('product_images')->delete($image->image_url);
+                }
+            }
+            if ($product->cover_image !== 'default.png') {
+                Storage::disk('product_cover')->delete($product->cover_image);
+            }
+
+            // Delete the product listing
+            $product->delete();
+
+            // Commit the transaction
+            DB::commit();
+        } catch (Exception $errors) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $errors->getMessage()
+            ], 500);
+        }
+
         return response()->json([
             'message' => 'Product deleted successfully',
         ]);

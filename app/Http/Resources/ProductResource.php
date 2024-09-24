@@ -15,9 +15,9 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
         return [
             'id' => $this->id,
+            'slug' => Str::slug($this->name, '-'),
             'name' => $this->name,
             'stock' => $this->stock,
             'color' => $this->color,

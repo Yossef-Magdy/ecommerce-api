@@ -17,13 +17,13 @@ class ProductDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
         return [
           'id' => $this->id,
+          'slug' => Str::slug($this->name, '-'),
           'name' => $this->name,
           'description' => $this->description,
           'stock' => $this->stock,
-          'price' => (float) $this->price,
+          'price' =>  (float) $this->price,
           'color' => $this->color,
           'size' => $this->size,
           'discount' => $this->discount,
