@@ -23,6 +23,8 @@ class ProductDetailsResource extends JsonResource
             'slug' => Str::slug($this->name, '-'),
             'name' => $this->name,
             'description' => $this->description,
+            'categories' => $this->categories,
+            'sub_categories' => $this->subCateroies,
             'discount' => $this->discount,
             'cover_image' => Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}"),
             'images' => ProductImagesResource::collection($this->images),

@@ -27,6 +27,16 @@ class Product extends Model
         return $this->hasMany(ProductReview::class);
     }
 
+    public function categories(): HasMany
+    {
+        return $this->hasMany(ProductCategory::class);
+    }
+
+    public function subCateroies(): HasMany
+    {
+        return $this->hasMany(ProductSubcategory::class);
+    }
+
     public function attributeOptions()
     {
         return $this->belongsToMany(AttributeOption::class, 'product_attribute_options');
