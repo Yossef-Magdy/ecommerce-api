@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class UserRole extends Model
 {
@@ -13,20 +14,20 @@ class UserRole extends Model
 
     public $timestamps = false;
 
-    protected $table = 'user_role';
+    protected $table = 'roles';
 
     protected $fillable = [
         'user_id',
         'role_id'
     ];
 
-    public function user(): BelongsTo
+    public function users()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsToMany(User::class, 'user_role', 'role_id', 'user_id');
     }
 
-    public function role(): BelongsTo
+    public function permissions()
     {
-        return $this->belongsTo(Role::class, 'role_id', 'id');
+        return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id'); 
     }
 }

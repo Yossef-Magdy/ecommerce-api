@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProductDiscount extends Model
 {
     use HasFactory;
+
+    protected $table = 'products_discount';
+
     protected $fillable = [
         'status',
         'expire_date',

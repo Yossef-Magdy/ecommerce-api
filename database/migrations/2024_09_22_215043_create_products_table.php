@@ -26,10 +26,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('stock');
-            $table->decimal('price', 10, 2);
-            $table->string('color');
-            $table->string('size');
             $table->string('cover_image')->default('default.png');
             $table->timestamps();
         });
