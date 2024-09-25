@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Orders\Order;
+use App\Models\Roles\Role;
 use App\Models\Products\ProductReview;
 use App\Models\Roles\Permission;
 use App\Models\Roles\UserRole;
@@ -21,29 +22,27 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
-    // Roles
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(UserRole::class, 'user_role', 'user_id', 'role_id');
+        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');       
+    }
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_permission', 'user_id', 'permission_id');
     }
 
     public function hasRole(string $role): bool
     {
-        return $this->roles()->where('roles.name', $role)->exists();
+        return $this->roles()->where('name', $role)->exists();
     }
 
     // permissions
-    public function permissions(): BelongsToMany
+    
+    public function hasPermission(string $permission) 
     {
-        return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id');
+        return $this->permissions()->where('name', $permission)->exists();
     }
 
-    public function hasPermission(string $role): bool
-    {
-        return $this->permissions()->where('permissions.name', $role)->exists();
-    }
-
-    // Orders
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
@@ -54,6 +53,10 @@ class User extends Authenticatable
         return $this->hasMany(ProductReview::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
     // Shipping
     public function shippingDetails(): HasMany
     {
