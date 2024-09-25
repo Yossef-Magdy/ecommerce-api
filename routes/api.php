@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Api\ProductReviewsController;
 use App\Http\Controllers\Api\ProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Middleware\AdminMiddleware;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -38,6 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ];
     });
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::prefix('control')->group(function () {
+        Route::apiResource('/users', UsersController::class);
+    });
 
     // Admin-only routes
     Route::middleware('can:manage-products')->group(function () {
