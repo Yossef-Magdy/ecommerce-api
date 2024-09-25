@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProductDiscountController;
 use App\Http\Controllers\Api\ProductReviewsController;
 use App\Http\Controllers\Api\ProductsController;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin-only routes
     Route::middleware('can:manage-products')->group(function () {
         Route::apiResource('/products', ProductsController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('/discounts', ProductDiscountController::class);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
