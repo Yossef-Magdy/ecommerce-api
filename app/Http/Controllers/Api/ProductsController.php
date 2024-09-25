@@ -18,15 +18,21 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $products = null;
+        if (!$request['count'] && !$request['page']) {
+            $products = ProductResource::collection(Product::all());
+        } else {
+            $products = Product::paginate($request['count'] ?? 1);
+            $products->data = ProductResource::collection($products);
+        }
         if (!$products) {
             return response()->json([
                 'message' => 'No products found',
             ], 404);
         }
-        return response()->json(ProductResource::collection($products), 200);
+        return response()->json($products, 200);
     }
 
     public function show(Product $product)
