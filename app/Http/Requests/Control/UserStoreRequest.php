@@ -61,11 +61,4 @@ class UserStoreRequest extends FormRequest
             response()->json(['errors' => $errors], 400)
         );
     }
-    protected function failedAuthorization()
-    {
-        throw new HttpResponseException(
-            response()->json(['message'=>'forbidden'], 403)
-        );
-    }
-
 }

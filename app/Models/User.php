@@ -40,9 +40,6 @@ class User extends Authenticatable
     {
         return $this->hasRole('admin'); 
     }
-
-
-    // permissions
     
     public function hasPermission(string $permission) 
     {
@@ -58,12 +55,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProductReview::class);
     }
-
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(ProductReview::class);
-    }
-    // Shipping
+    
     public function shippingDetails(): HasMany
     {
         return $this->hasMany(ShippingDetails::class);

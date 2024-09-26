@@ -7,19 +7,24 @@ use App\Http\Requests\Control\UserStoreRequest;
 use App\Http\Requests\Control\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
+    public User $user;
+
+    function __construct() {
+        $this->user = Auth::user();
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        if (Auth::user()->cannot('viewAny', User::class)) {
+        if ($this->user->cannot('viewAny', User::class)) {
             return response()->json(['message' => 'forbidden'], 403);
         }
         return UserResource::collection(User::with('roles', 'permissions')->paginate(10));
@@ -52,7 +57,7 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        if (Auth::user()->cannot('view', $user)) {
+        if ($this->user->cannot('view', $user)) {
             return response()->json(['message' => 'forbidden'], 403);
         }
         return new UserResource($user);
@@ -79,7 +84,7 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        if (Auth::user()->cannot('delete', $user)) {
+        if ($this->user->cannot('delete', $user)) {
             return response()->json(['message' => 'forbidden'], 403);
         }
         $user->delete();

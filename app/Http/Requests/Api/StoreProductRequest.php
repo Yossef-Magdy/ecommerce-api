@@ -6,6 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Products\Product;
 
 class StoreProductRequest extends FormRequest
 {
@@ -14,10 +15,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Check if user authorized
-        // return Auth::check();
-
-        return true;
+        return Auth::user()->isAdmin() || Auth::user()->can('create', Product::class);
     }
 
     /**

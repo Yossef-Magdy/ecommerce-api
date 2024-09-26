@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\Request;
 
@@ -18,15 +19,17 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            if ($request->is('api/control/*')) {
-                return response()->json(['message' => 'not found'], 404);
-            }
-        });
-        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Resource not found !'
+                    'message' => 'not found'
                 ], 404);
+            }
+        });
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request){
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'forbidden'
+                ], 403);
             }
         });
     })->create();

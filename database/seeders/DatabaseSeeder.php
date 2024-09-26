@@ -8,6 +8,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Roles\Permission;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,10 +19,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'first_name' => 'admin',
+            'last_name' => 'admin',
+            'email' => 'admin@mail.com',
+            'password' => Hash::make('admin'),
+        ]);
 
         $this->addPermissions();
         $this->addCategories();
@@ -29,7 +32,7 @@ class DatabaseSeeder extends Seeder
     }
     private function addPermissions() {
         $actions = ['add', 'delete', 'update', 'view'];
-        $models = ['products', 'categories', 'users', 'subcategory', 'orders', 'coupons'];
+        $models = ['products', 'categories', 'users', 'subcategory', 'orders', 'coupons', 'reviews'];
         $permissions = [];
         foreach ($models as $model) {
             foreach ($actions as $action) {
