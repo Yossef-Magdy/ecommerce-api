@@ -20,6 +20,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('control')->group(function () {
         Route::apiResource('/users', UserController::class);
         Route::apiResource('/products', ProductsController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('/categories', CategoryController::class);
+        Route::apiResource('/subcategories', SubcategoryController::class);
+        Route::apiResource('/coupons', CouponsController::class);
+        Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'update']);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
