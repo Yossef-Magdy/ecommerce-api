@@ -17,6 +17,7 @@ class UserController extends Controller
 
     function __construct() {
         $this->user = Auth::user();
+        $this->authorizeResource(User::class, 'user');
     }
 
     /**
@@ -24,9 +25,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        if ($this->user->cannot('viewAny', User::class)) {
-            return response()->json(['message' => 'forbidden'], 403);
-        }
         return UserResource::collection(User::with('roles', 'permissions')->paginate(10));
     }
 
@@ -57,9 +55,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        if ($this->user->cannot('view', $user)) {
-            return response()->json(['message' => 'forbidden'], 403);
-        }
         return new UserResource($user);
     }
 
@@ -84,9 +79,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if ($this->user->cannot('delete', $user)) {
-            return response()->json(['message' => 'forbidden'], 403);
-        }
         $user->delete();
         return response()->json(['message'=>'user deleted successfully']);
     }
