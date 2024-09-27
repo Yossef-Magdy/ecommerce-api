@@ -26,13 +26,20 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('admin'),
         ]);
 
+        Role::create(['name' => 'admin']);
+
+        UserRole::create([
+            'user_id' => 1,
+            'role_id' => 1,
+        ]);
+
         $this->addPermissions();
         $this->addCategories();
         $this->addSubcategories();
     }
     private function addPermissions() {
         $actions = ['add', 'delete', 'update', 'view'];
-        $models = ['products', 'categories', 'users', 'subcategory', 'orders', 'coupons', 'reviews'];
+        $models = ['products', 'categories', 'users', 'subcategories', 'orders', 'coupons', 'reviews'];
         $permissions = [];
         foreach ($models as $model) {
             foreach ($actions as $action) {
@@ -47,7 +54,11 @@ class DatabaseSeeder extends Seeder
     private function addCategories() {
         $categories = ['men', 'women', 'kids'];
         $categories = array_map(function($category) {
-            return ['name' => $category];
+            return [
+                'name' => $category,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }, $categories);
         Category::insert($categories);   
     }
