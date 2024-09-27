@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Categories\Category;
-use App\Models\Categories\SubCategory;
+use App\Models\Categories\Subcategory;
 use App\Models\User;
 use App\Models\Roles\Role;
 use App\Models\Roles\UserRole;
@@ -80,6 +80,6 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ];
         }, $subcategories);
-        SubCategory::insert($subcategories);
+        Subcategory::insert($subcategories);
     }
 }
