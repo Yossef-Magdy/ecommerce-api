@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Categories\Category;
 use App\Models\Categories\SubCategory;
 use App\Models\User;
+use App\Models\Roles\Role;
+use App\Models\Roles\UserRole;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Roles\Permission;
