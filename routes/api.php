@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Control\UsersController;
+use App\Http\Controllers\Control\UserphController;
 use App\Http\Controllers\Api\ProductReviewsController;
 use App\Http\Controllers\Api\ProductsController;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('control')->group(function () {
-        Route::apiResource('/users', UsersController::class);
+        Route::apiResource('/users', UserController::class);
         Route::apiResource('/products', ProductsController::class)->only(['store', 'update', 'destroy']);
     });
 
