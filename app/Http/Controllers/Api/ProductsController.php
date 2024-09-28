@@ -15,9 +15,17 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
+    public User $user;
+
+    function __construct() {
+        $this->user = Auth::user();
+    }
+
     public function index(Request $request)
     {
         $products = null;
@@ -27,21 +35,11 @@ class ProductsController extends Controller
             $products = Product::paginate($request['count'] ?? 1);
             $products->data = ProductResource::collection($products);
         }
-        if (!$products) {
-            return response()->json([
-                'message' => 'No products found',
-            ], 404);
-        }
         return response()->json($products, 200);
     }
 
     public function show(Product $product)
     {
-        if (!$product) {
-            return response()->json([
-                'message' => 'Product not found',
-            ], 404);
-        }
         return response()->json([
             'message' => 'Product retrieved successfully',
             'data' => ProductDetailsResource::make($product),
@@ -117,11 +115,11 @@ class ProductsController extends Controller
 
     public function destroy(Product $product)
     {
-        // Start a new database transaction
+        if (!Auth::user()->isAdmin() && Auth::user()->cannot('delete', $product)) {
+            return response()->json(['message' => 'forbidden'], 403);
+        }
         DB::beginTransaction();
-
         try {
-            // Delete the product images
             if ($product->images) {
                 foreach ($product->images as $image) {
                     Storage::disk('product_images')->delete($image->image_url);
@@ -130,11 +128,7 @@ class ProductsController extends Controller
             if ($product->cover_image !== 'default.png') {
                 Storage::disk('product_cover')->delete($product->cover_image);
             }
-
-            // Delete the product listing
             $product->delete();
-
-            // Commit the transaction
             DB::commit();
         } catch (Exception $errors) {
             DB::rollBack();
@@ -142,7 +136,6 @@ class ProductsController extends Controller
                 'message' => $errors->getMessage()
             ], 500);
         }
-
         return response()->json([
             'message' => 'Product deleted successfully',
         ]);

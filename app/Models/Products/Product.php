@@ -32,7 +32,7 @@ class Product extends Model
         return $this->hasMany(ProductCategory::class);
     }
 
-    public function subCateroies(): HasMany
+    public function subcateroies(): HasMany
     {
         return $this->hasMany(ProductSubcategory::class);
     }

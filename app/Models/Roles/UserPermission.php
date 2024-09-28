@@ -5,21 +5,22 @@ namespace App\Models\Roles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
 
-class RolePermission extends Model
+class UserPermission extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'role_id',
+        'user_id',
         'permission_id',
     ];
 
-    protected $table = 'role_permission';
+    protected $table = 'user_permission';
 
-    public function role(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Role::class, 'role_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function permission(): BelongsTo

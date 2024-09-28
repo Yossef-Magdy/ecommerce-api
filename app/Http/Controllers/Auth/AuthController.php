@@ -34,4 +34,25 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logout successful']);
     }
+    function me(Request $request) {
+        $user = $request->user()->load('roles.permissions');
+        return [
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'roles' => $user->roles->map(function ($role) {
+                return [
+                    'name' => $role->name,
+                    'permissions' => $role->permissions->map(function ($permission) {
+                        return $permission->name;
+                    }),
+                ];
+            }),
+            'permissions' => $user->roles->flatMap(function ($role) {
+                return $role->permissions->pluck('name');
+            })->unique()->values()->all(),
+            'hasPermissionEdit' => $user->hasPermission('edit'),
+        ];
+    }
 }
