@@ -1,6 +1,9 @@
 <?php
 
-use App\Http\Controllers\Control\UsersController;
+use App\Http\Controllers\Control\UserController;
+use App\Http\Controllers\Control\CategoryController;
+use App\Http\Controllers\Control\SubcategoryController;
+use App\Http\Controllers\Control\OrderController;
 use App\Http\Controllers\Api\ProductReviewsController;
 use App\Http\Controllers\Api\ProductsController;
 use Illuminate\Support\Facades\Route;
@@ -18,8 +21,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('control')->group(function () {
-        Route::apiResource('/users', UsersController::class);
+        Route::apiResource('/users', UserController::class);
         Route::apiResource('/products', ProductsController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('/categories', CategoryController::class);
+        Route::apiResource('/subcategories', SubcategoryController::class);
+        Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'update']);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);

@@ -2,12 +2,12 @@
 
 namespace App\Models\Products;
 
-use App\Models\Categories\SubCategory;
+use App\Models\Categories\Subcategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProductSubCategory extends Model
+class ProductSubcategory extends Model
 {
     use HasFactory;
 
@@ -27,6 +27,6 @@ class ProductSubCategory extends Model
 
     public function subcategory(): BelongsTo
     {
-        return $this->belongsTo(SubCategory::class);
+        return $this->belongsTo(Subcategory::class);
     }
 }

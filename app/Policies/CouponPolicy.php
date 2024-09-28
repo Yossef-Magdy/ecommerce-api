@@ -2,26 +2,26 @@
 
 namespace App\Policies;
 
-use App\Models\Products\Product;
+use App\Models\Coupon;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ProductPolicy
+class CouponPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasPermission('view coupons');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Product $product): bool
+    public function view(User $user, Coupon $coupon): bool
     {
-        return true;
+        return $user->hasPermission('view coupons');
     }
 
     /**
@@ -29,38 +29,38 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('add products');
+        return $user->hasPermission('add coupons');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Product $product): bool
+    public function update(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('update products');
+        return $user->hasPermission('update coupons');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Product $product): bool
+    public function delete(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('delete products');
+        return $user->hasPermission('delete coupons');
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Product $product): bool
+    public function restore(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('delete products');
+        return $user->hasPermission('delete coupons');
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Product $product): bool
+    public function forceDelete(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('delete products');
+        return $user->hasPermission('delete coupons');
     }
 }
