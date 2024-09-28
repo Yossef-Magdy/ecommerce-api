@@ -13,7 +13,7 @@ class SubcategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->hasPermission('view subcategories');
+        return $user->hasPermission('view subcategories');
     }
 
     /**
@@ -21,7 +21,7 @@ class SubcategoryPolicy
      */
     public function view(User $user, SubCategory $subcategory): bool
     {
-        return $user->isAdmin() || $user->hasPermission('view subcategories');
+        return $user->hasPermission('view subcategories');
     }
 
     /**
@@ -29,7 +29,7 @@ class SubcategoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->hasPermission('add subcategories');
+        return $user->hasPermission('add subcategories');
     }
 
     /**
@@ -37,7 +37,7 @@ class SubcategoryPolicy
      */
     public function update(User $user, SubCategory $subcategory): bool
     {
-        return $user->isAdmin() || $user->hasPermission('update subcategories');
+        return $user->hasPermission('update subcategories');
     }
 
     /**
@@ -45,7 +45,7 @@ class SubcategoryPolicy
      */
     public function delete(User $user, SubCategory $subcategory): bool
     {
-        return $user->isAdmin() || $user->hasPermission('delete subcategories');
+        return $user->hasPermission('delete subcategories');
     }
 
     /**
@@ -53,7 +53,7 @@ class SubcategoryPolicy
      */
     public function restore(User $user, SubCategory $subcategory): bool
     {
-        return $user->isAdmin() || $user->hasPermission('delete subcategories');
+        return $user->hasPermission('delete subcategories');
     }
 
     /**
@@ -61,6 +61,6 @@ class SubcategoryPolicy
      */
     public function forceDelete(User $user, SubCategory $subcategory): bool
     {
-        return $user->isAdmin() || $user->hasPermission('delete subcategories');
+        return $user->hasPermission('delete subcategories');
     }
 }
