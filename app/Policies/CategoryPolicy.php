@@ -13,7 +13,7 @@ class CategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->hasPermission('view categories');
+        return $user->hasPermission('view categories');
     }
 
     /**
@@ -21,7 +21,7 @@ class CategoryPolicy
      */
     public function view(User $user, Category $category): bool
     {
-        return $user->isAdmin() || $user->hasPermission('view categories');
+        return $user->hasPermission('view categories');
     }
 
     /**
@@ -29,7 +29,7 @@ class CategoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->hasPermission('add categories');
+        return $user->hasPermission('add categories');
     }
 
     /**
@@ -37,7 +37,7 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        return $user->isAdmin() || $user->hasPermission('update categories');
+        return $user->hasPermission('update categories');
     }
 
     /**
@@ -45,7 +45,7 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): bool
     {
-        return $user->isAdmin() || $user->hasPermission('delete categories');
+        return $user->hasPermission('delete categories');
     }
 
     /**
@@ -53,7 +53,7 @@ class CategoryPolicy
      */
     public function restore(User $user, Category $category): bool
     {
-        return $user->isAdmin() || $user->hasPermission('delete categories');
+        return $user->hasPermission('delete categories');
     }
 
     /**
@@ -61,6 +61,6 @@ class CategoryPolicy
      */
     public function forceDelete(User $user, Category $category): bool
     {
-        return $user->isAdmin() || $user->hasPermission('delete categories');
+        return $user->hasPermission('delete categories');
     }
 }
