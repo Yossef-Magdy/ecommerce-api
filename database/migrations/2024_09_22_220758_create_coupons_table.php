@@ -34,7 +34,7 @@ return new class extends Migration
            $table->string('discount_type');
            $table->integer('discount_value');
            $table->date('expiry_date');
-           $table->foreignId('product_id')->constrained('products'); 
+           $table->foreignId('product_id')->unique()->constrained('products')->cascadeOnDelete(); 
            $table->timestamps();
         });
     }

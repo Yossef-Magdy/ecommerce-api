@@ -14,9 +14,9 @@ class ProductDiscount extends Model
 
     protected $fillable = [
         'status',
-        'expire_date',
+        'expiry_date',
         'discount_type',
-        'discount_amount',
+        'discount_value',
         'product_id',
     ];
 
