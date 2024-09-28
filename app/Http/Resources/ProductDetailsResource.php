@@ -2,12 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Products\ProductImage;
-use App\Models\Products\ProductOption;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
-use Ramsey\Uuid\Type\Decimal;
 
 class ProductDetailsResource extends JsonResource
 {
@@ -40,6 +37,7 @@ class ProductDetailsResource extends JsonResource
             ->all();
 
         $cover = Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}");
+        
         return [
             'id' => $this->id,
             'slug' => Str::slug($this->name, '-'),
