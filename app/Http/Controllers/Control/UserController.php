@@ -13,10 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public User $user;
-
     function __construct() {
-        $this->user = Auth::user();
         $this->authorizeResource(User::class, 'user');
     }
 
