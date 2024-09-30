@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('cover_image')->default('default.png');
+            $table->string('price');
             $table->timestamps();
         });
         Schema::create('product_category', function (Blueprint $table) {
@@ -42,6 +43,16 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('image_url');
         });
+        Schema::create('product_details', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('color');
+            $table->string('size');
+            $table->string('material');
+            $table->integer('stock');
+            $table->decimal('price', 10, 2);
+            $table->timestamps();
+        });
     }
 
     /**
@@ -49,6 +60,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('product_details');
         Schema::dropIfExists('product_category');
         Schema::dropIfExists('product_subcategory');
         Schema::dropIfExists('subcategories');

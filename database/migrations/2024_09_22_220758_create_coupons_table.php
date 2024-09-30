@@ -30,10 +30,10 @@ return new class extends Migration
 
         Schema::create('products_discount', function (Blueprint $table) {
            $table->id();
-           $table->string('status');
-           $table->string('discount_type');
-           $table->integer('discount_value');
-           $table->date('expiry_date');
+           $table->enum('status', ['active', 'closed'])->default('active');
+           $table->enum('discount_type', ['fixed', 'percentage'])->default('fixed');
+           $table->integer('discount_value')->default(0);
+           $table->date('expiry_date')->default(now()->addWeek());
            $table->foreignId('product_id')->unique()->constrained('products')->cascadeOnDelete(); 
            $table->timestamps();
         });
