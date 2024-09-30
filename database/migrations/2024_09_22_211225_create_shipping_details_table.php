@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('governorates', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
         });
         Schema::create('shipping_details', function (Blueprint $table) {
             $table->id();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('apartment');
             $table->string('postal_code');
             $table->string('phone_number');
+            $table->boolean('is_default')->default(false);
             $table->foreignId('governorate_id')->constrained('governorates')->cascadeOnUpdate();
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
