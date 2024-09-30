@@ -9,27 +9,11 @@ use Illuminate\Auth\Access\Response;
 class ProductPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Product $product): bool
-    {
-        return true;
-    }
-
-    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('add products');
+        return $user->hasPermission('add-products');
     }
 
     /**
@@ -37,7 +21,7 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return $user->hasPermission('update products');
+        return $user->hasPermission('update-products');
     }
 
     /**
@@ -45,7 +29,7 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        return $user->hasPermission('delete products');
+        return $user->hasPermission('delete-products');
     }
 
     /**
@@ -53,7 +37,7 @@ class ProductPolicy
      */
     public function restore(User $user, Product $product): bool
     {
-        return $user->hasPermission('delete products');
+        return $user->hasPermission('delete-products');
     }
 
     /**
@@ -61,6 +45,6 @@ class ProductPolicy
      */
     public function forceDelete(User $user, Product $product): bool
     {
-        return $user->hasPermission('delete products');
+        return $user->hasPermission('delete-products');
     }
 }

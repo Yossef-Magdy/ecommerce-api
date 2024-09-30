@@ -13,15 +13,7 @@ class CouponPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view coupons');
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Coupon $coupon): bool
-    {
-        return $user->hasPermission('view coupons');
+        return $user->hasPermission('view-coupons');
     }
 
     /**
@@ -29,7 +21,7 @@ class CouponPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('add coupons');
+        return $user->hasPermission('add-coupons');
     }
 
     /**
@@ -37,7 +29,7 @@ class CouponPolicy
      */
     public function update(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('update coupons');
+        return $user->hasPermission('update-coupons');
     }
 
     /**
@@ -45,7 +37,7 @@ class CouponPolicy
      */
     public function delete(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('delete coupons');
+        return $user->hasPermission('delete-coupons');
     }
 
     /**
@@ -53,7 +45,7 @@ class CouponPolicy
      */
     public function restore(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('delete coupons');
+        return $user->hasPermission('delete-coupons');
     }
 
     /**
@@ -61,6 +53,6 @@ class CouponPolicy
      */
     public function forceDelete(User $user, Coupon $coupon): bool
     {
-        return $user->hasPermission('delete coupons');
+        return $user->hasPermission('delete-coupons');
     }
 }

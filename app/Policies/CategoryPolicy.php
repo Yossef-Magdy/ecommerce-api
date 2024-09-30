@@ -9,27 +9,11 @@ use Illuminate\Auth\Access\Response;
 class CategoryPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return $user->hasPermission('view categories');
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Category $category): bool
-    {
-        return $user->hasPermission('view categories');
-    }
-
-    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('add categories');
+        return $user->hasPermission('add-categories');
     }
 
     /**
@@ -37,7 +21,7 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        return $user->hasPermission('update categories');
+        return $user->hasPermission('update-categories');
     }
 
     /**
@@ -45,7 +29,7 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): bool
     {
-        return $user->hasPermission('delete categories');
+        return $user->hasPermission('delete-categories');
     }
 
     /**
@@ -53,7 +37,7 @@ class CategoryPolicy
      */
     public function restore(User $user, Category $category): bool
     {
-        return $user->hasPermission('delete categories');
+        return $user->hasPermission('delete-categories');
     }
 
     /**
@@ -61,6 +45,6 @@ class CategoryPolicy
      */
     public function forceDelete(User $user, Category $category): bool
     {
-        return $user->hasPermission('delete categories');
+        return $user->hasPermission('delete-categories');
     }
 }
