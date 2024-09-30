@@ -18,22 +18,6 @@ class ProductController extends Controller
     function __construct() {
         $this->authorizeResource(Product::class, 'product');
     }
-    public function index(Request $request)
-    {
-        if ($request['count'] || $request['page']) {
-            $products = Product::paginate($request['count'] ?? 1);
-            return ProductDetailsResource::collection($products);
-        }
-        return ProductDetailsResource::collection(Product::all());
-    }
-
-    public function show(Product $product)
-    {
-        return response()->json([
-            'message' => 'Product retrieved successfully',
-            'data' => ProductDetailsResource::make($product),
-        ]);
-    }
     public function store(StoreProductRequest $request)
     {
         DB::beginTransaction();
