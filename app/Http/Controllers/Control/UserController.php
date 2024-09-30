@@ -7,13 +7,14 @@ use App\Http\Requests\Control\UserStoreRequest;
 use App\Http\Requests\Control\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    function __construct() {
+    function __construct()
+    {
+        $this->modelName = 'user';
         $this->authorizeResource(User::class, 'user');
     }
 
@@ -30,12 +31,12 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        DB::transaction(function() use($request) {
+        DB::transaction(function () use ($request) {
             $user = User::create([
-                'first_name'=>$request->first_name,
-                'last_name'=>$request->last_name,
-                'email'=>$request->email,
-                'password'=>Hash::make($request->password),
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
             ]);
             if ($request->roles) {
                 $user->roles()->attach($request->roles);
@@ -44,7 +45,7 @@ class UserController extends Controller
                 $user->permissions()->attach($request->permissions);
             }
         }, 5);
-        return response()->json(['message'=>'user added successfully']);
+        return $this->createdResponse();
     }
 
     /**
@@ -68,7 +69,7 @@ class UserController extends Controller
         if (isset($permissions)) {
             $user->permissions()->sync($permissions);
         }
-        return response()->json(['message'=>'user updated successfully']);
+        return $this->updatedResponse();
     }
 
     /**
@@ -77,6 +78,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return response()->json(['message'=>'user deleted successfully']);
+        return $this->deletedResponse();
     }
 }
