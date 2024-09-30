@@ -16,7 +16,8 @@ class ProductDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $averageRating = $this->reviews->avg('rating');
+        $reviews = $this->reviews;
+        $averageRating = $reviews->avg('rating');
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
         $cover = Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}");
         $details = $this->details;
@@ -34,12 +35,12 @@ class ProductDetailsResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'details' => $details,
-            'reviews_count' => $this->reviews->count(),
+            'reviews' => $reviews,
             'rating' => $averageRating,
             'categories' => CategoryResource::collection($this->categories),
             'sub_categories' => SubcategoryResource::collection($this->subcategories),
-            'type' => $discount->type,
-            'value' => $discount->value,
+            'discount_type' => $discount->type,
+            'discount_value' => $discount->value,
             'cover_image' => $cover,
             'images' => ProductImagesResource::collection($this->images),
         ];
