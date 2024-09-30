@@ -31,8 +31,8 @@ return new class extends Migration
         Schema::create('products_discount', function (Blueprint $table) {
            $table->id();
            $table->enum('status', ['active', 'closed'])->default('active');
-           $table->enum('discount_type', ['fixed', 'percentage'])->default('fixed');
-           $table->integer('discount_value')->default(0);
+           $table->enum('type', ['fixed', 'percentage'])->default('fixed');
+           $table->integer('value')->default(0);
            $table->date('expiry_date')->default(now()->addWeek());
            $table->foreignId('product_id')->unique()->constrained('products')->cascadeOnDelete(); 
            $table->timestamps();

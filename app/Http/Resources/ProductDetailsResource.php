@@ -23,8 +23,8 @@ class ProductDetailsResource extends JsonResource
         $discount = $this->discount;
         if (!isset($discount)) {
             $discount = new ProductDiscount([
-                'discount_type' => 'fixed',
-                'discount_value' => 0,
+                'type' => 'fixed',
+                'value' => 0,
             ]);
         } 
         return [
@@ -38,8 +38,8 @@ class ProductDetailsResource extends JsonResource
             'rating' => $averageRating,
             'categories' => CategoryResource::collection($this->categories),
             'sub_categories' => SubcategoryResource::collection($this->subcategories),
-            'discount_type' => $discount->type,
-            'discount_value' => $discount->value,
+            'type' => $discount->type,
+            'value' => $discount->value,
             'cover_image' => $cover,
             'images' => ProductImagesResource::collection($this->images),
         ];

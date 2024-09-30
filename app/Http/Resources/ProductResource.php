@@ -19,8 +19,8 @@ class ProductResource extends JsonResource
         $discount = $this->discount;
         if (!isset($discount)) {
             $discount = new ProductDiscount([
-                'discount_type' => 'fixed',
-                'discount_value' => 0,
+                'type' => 'fixed',
+                'value' => 0,
             ]);
         } 
         return [
@@ -28,8 +28,8 @@ class ProductResource extends JsonResource
             'slug' => Str::slug($this->name, '-'),
             'name' => $this->name,
             'price' => $this->price,
-            'discount_type' => $discount->type,
-            'discount_value' => $discount->value,
+            'type' => $discount->type,
+            'value' => $discount->value,
             'cover_image' => Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}"),
             'images' => ProductImagesResource::collection($this->images),
         ];
