@@ -13,7 +13,7 @@ class GovernoratePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view-coupons');
+        return $user->hasPermission('view-governorates');
     }
 
     /**
@@ -21,7 +21,7 @@ class GovernoratePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('add-coupons');
+        return $user->hasPermission('add-governorates');
     }
 
     /**
