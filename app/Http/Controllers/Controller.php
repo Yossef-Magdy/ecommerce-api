@@ -9,22 +9,28 @@ abstract class Controller extends BaseController
 {
     use AuthorizesRequests;
     protected string $modelName = "resource";
-    function createdResponse()
+    function createdResponse($data = null)
     {
-        return response()->json([
-            'message' => "$this->modelName created successfully"
-        ], 200);
+        $response = ['message' => "$this->modelName created successfully"];
+        if (isset($data)) {
+            $response['data'] = $data;
+        }
+        return response()->json($response, 200);
     }
-    function updatedResponse()
+    function updatedResponse($data = null)
     {
-        return response()->json([
-            'message' => "$this->modelName updated successfully"
-        ], 200);
+        $response = ['message' => "$this->modelName updated successfully"];
+        if (isset($data)) {
+            $response['data'] = $data;
+        }
+        return response()->json($response, 200);
     }
-    function deletedResponse()
+    function deletedResponse($data = null)
     {
-        return response()->json([
-            'message' => "$this->modelName deleted successfully"
-        ], 200);
+        $response = ['message' => "$this->modelName deleted successfully"];
+        if (isset($data)) {
+            $response['data'] = $data;
+        }
+        return response()->json($response, 200);
     }
 }
