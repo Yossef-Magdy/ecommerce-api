@@ -8,14 +8,14 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\Product;
 
-class StoreProductRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::user()->isAdmin() || Auth::user()->can('create', Product::class);
+        return true;
     }
 
     /**
@@ -26,11 +26,16 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name',
-            'description',
-            'cover_image',
-            'product_images',
-            'attributes'
+            'name' => ['string'],
+            'description' => ['string'],
+            'price' => ['numeric'],
+            'cover_image' => ['image', 'mimes:jpg,png'],
+            'product_images' => ['array'],
+            'product_images.*' => ['image'],
+            'categories' => ['array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
+            'subcategories' => ['array'],
+            'subcategories.*' => ['integer', 'exists:subcategories,id'],
         ];
     }
 
@@ -42,15 +47,10 @@ class StoreProductRequest extends FormRequest
             'cover_image.image' => 'Product cover image should be an image',
             'cover_image.mimes' => 'Product cover image must be a file of type: jpg, png.',
             'cover_image.max' => 'Product cover image may not be greater than 5 MB.',
-            'product_images.image' => 'Product images should be an image',
-            'product_images.mimes' => 'Product images must be a file of type: jpg, png.',
-            'product_images.max' => 'Product images may not be greater than 5 MB.',
-            'attributes.required' => 'Product attributes are required',
-            'attributes.array' => 'Product attributes must be an array',
-            'attributes.*.name.required' => 'Product attribute name is required',
-            'attributes.*.options.required' => 'Product attribute value is required',
-            'attributes.*.options.array' => 'Product attribute values must be an array',
-        ];
+            'product_images.*.image' => 'Product images should be an image',
+            'product_images.*.mimes' => 'Product images must be a file of type: jpg, png.',
+            'product_images.*.max' => 'Product images may not be greater than 5 MB.',
+        ];    
     }
 
     /**

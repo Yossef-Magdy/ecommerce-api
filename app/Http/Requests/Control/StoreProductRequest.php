@@ -5,18 +5,14 @@ namespace App\Http\Requests\Api;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
 
-class DestroyProductRequest extends FormRequest
+class StoreProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Check if user authorized
-        // return Auth::check();
-
         return true;
     }
 
@@ -28,27 +24,31 @@ class DestroyProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name', 'description', 'stock', 'price', 'color', 'size', 'cover_image'
+            'name' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'price' => ['required', 'numeric'],
+            'cover_image' => ['image', 'mimes:jpg,png'],
+            'product_images' => ['array'],
+            'product_images.*' => ['image'],
+            'categories' => ['array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
+            'subcategories' => ['array'],
+            'subcategories.*' => ['integer', 'exists:subcategories,id'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name' => 'Product name is required',
-            'description' => 'Product description is required',
-            'stock' => 'Product stock is required',
-            'stock' => 'Product stock should be an integer',
-            'price' => 'Product price is required',
-            'price.numeric' => 'Product price should be a number',
-            'color' => 'Product color is required',
-            'color.string' => 'Product color should be a string',
-            'size' => 'Product size is required',
-            'size.in' => 'Product size must be one of: m, l, xl, xxl, xxxl',
+            'name.required' => 'Product name is required',
+            'description.required' => 'Product description is required',
             'cover_image.image' => 'Product cover image should be an image',
             'cover_image.mimes' => 'Product cover image must be a file of type: jpg, png.',
             'cover_image.max' => 'Product cover image may not be greater than 5 MB.',
-        ];        
+            'product_images.*.image' => 'Product images should be an image',
+            'product_images.*.mimes' => 'Product images must be a file of type: jpg, png.',
+            'product_images.*.max' => 'Product images may not be greater than 5 MB.',
+        ];
     }
 
     /**

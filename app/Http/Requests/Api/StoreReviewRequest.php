@@ -12,8 +12,6 @@ class StoreReviewRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Check if user authorized
-        // return Auth::check();
         return true;
     }
 
