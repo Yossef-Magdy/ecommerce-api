@@ -9,27 +9,11 @@ use Illuminate\Auth\Access\Response;
 class SubcategoryPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return $user->hasPermission('view subcategories');
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, SubCategory $subcategory): bool
-    {
-        return $user->hasPermission('view subcategories');
-    }
-
-    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('add subcategories');
+        return $user->hasPermission('add-subcategories');
     }
 
     /**
@@ -37,7 +21,7 @@ class SubcategoryPolicy
      */
     public function update(User $user, SubCategory $subcategory): bool
     {
-        return $user->hasPermission('update subcategories');
+        return $user->hasPermission('update-subcategories');
     }
 
     /**
@@ -45,7 +29,7 @@ class SubcategoryPolicy
      */
     public function delete(User $user, SubCategory $subcategory): bool
     {
-        return $user->hasPermission('delete subcategories');
+        return $user->hasPermission('delete-subcategories');
     }
 
     /**
@@ -53,7 +37,7 @@ class SubcategoryPolicy
      */
     public function restore(User $user, SubCategory $subcategory): bool
     {
-        return $user->hasPermission('delete subcategories');
+        return $user->hasPermission('delete-subcategories');
     }
 
     /**
@@ -61,6 +45,6 @@ class SubcategoryPolicy
      */
     public function forceDelete(User $user, SubCategory $subcategory): bool
     {
-        return $user->hasPermission('delete subcategories');
+        return $user->hasPermission('delete-subcategories');
     }
 }

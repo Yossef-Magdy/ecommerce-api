@@ -30,9 +30,9 @@ class ProductDiscountRequest extends FormRequest
         return [
             'status.in:active,closed',
             'expiry_date.date/after:today',
-            'discount_type.required_if:status,active',
-            'discount_type.in:fixed,percentage',
-            'discount_value.required',
+            'type.required_if:status,active',
+            'type.in:fixed,percentage',
+            'value.required',
             'product_id.exists:products,id',
         ];
     }
@@ -40,9 +40,9 @@ class ProductDiscountRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'discount_type.required_if' => 'Discount type is required when status is active',
-            'discount_type.in' => 'Discount type must be one of: fixed, percentage',
-            'discount_value.required' => 'Discount value is required',
+            'type.required_if' => 'Discount type is required when status is active',
+            'type.in' => 'Discount type must be one of: fixed, percentage',
+            'value.required' => 'Discount value is required',
             'product_id.exists:products,id' => 'Product not found',
             'status.in' => 'Status must be one of: active, closed',
             'expiry_date.after' => 'Expire date must be after today',

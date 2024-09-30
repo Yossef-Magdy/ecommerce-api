@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'cover_image'];
+    protected $fillable = ['name', 'description', 'price', 'cover_image'];
 
     public function images(): HasMany
     {
@@ -32,17 +32,13 @@ class Product extends Model
         return $this->hasMany(ProductCategory::class);
     }
 
-    public function subcateroies(): HasMany
+    public function subcategories(): HasMany
     {
         return $this->hasMany(ProductSubcategory::class);
     }
 
-    public function attributeOptions()
+    public function details(): HasMany
     {
-        return $this->belongsToMany(AttributeOption::class, 'product_attribute_options');
-    }
-    public function productOptions()
-    {
-        return $this->hasMany(ProductOption::class);
+        return $this->hasMany(ProductDetail::class);
     }
 }

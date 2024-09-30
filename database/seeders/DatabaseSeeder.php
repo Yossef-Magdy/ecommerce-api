@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Categories\Category;
 use App\Models\Categories\Subcategory;
+use App\Models\Governorate;
 use App\Models\User;
 use App\Models\Roles\Role;
 use App\Models\Roles\UserRole;
@@ -38,39 +39,60 @@ class DatabaseSeeder extends Seeder
         $this->addPermissions();
         $this->addCategories();
         $this->addSubcategories();
+        $this->addGovernorates();
     }
-    private function addPermissions() {
+    private function addPermissions()
+    {
         $actions = ['add', 'delete', 'update', 'view'];
-        $models = ['products', 'categories', 'users', 'subcategories', 'orders', 'coupons', 'reviews'];
+        $models = [
+            'users', 
+            'products', 
+            'reviews',
+            'orders', 
+            'coupons', 
+            'shippings', 
+            'payments', 
+            'categories', 
+            'subcategories', 
+            'governorates'
+        ];
         $permissions = [];
         foreach ($models as $model) {
             foreach ($actions as $action) {
-                $permissions[] = "$action $model";
+                $permissions[] = "$action-$model";
             }
         }
-        $permissions = array_map(function($permission) {
+        $permissions = array_map(function ($permission) {
             return ['name' => $permission];
         }, $permissions);
         Permission::insert($permissions);
     }
-    private function addCategories() {
+    private function addCategories()
+    {
         $categories = ['men', 'women', 'kids'];
-        $categories = array_map(function($category) {
+        $categories = array_map(function ($category) {
             return [
                 'name' => $category,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }, $categories);
-        Category::insert($categories);   
+        Category::insert($categories);
     }
-    private function addSubcategories() {
+    private function addSubcategories()
+    {
         $subcategories = [
-            ['shorts', 1], ['shirts', 1], ['pants', 1],
-            ['shoes', 1], ['dresses', 2], ['skirts', 2],
-            ['shirts', 2], ['pants', 3], ['t-shirts', 3],
+            ['shorts', 1],
+            ['shirts', 1],
+            ['pants', 1],
+            ['shoes', 1],
+            ['dresses', 2],
+            ['skirts', 2],
+            ['shirts', 2],
+            ['pants', 3],
+            ['t-shirts', 3],
         ];
-        $subcategories = array_map(function($data) {
+        $subcategories = array_map(function ($data) {
             $subcategory = $data[0];
             $category_id = $data[1];
             return [
@@ -81,5 +103,14 @@ class DatabaseSeeder extends Seeder
             ];
         }, $subcategories);
         Subcategory::insert($subcategories);
+    }
+    function addGovernorates() {
+        $governorates = ['giza', 'cairo', 'alexandria'];
+        $governorates = array_map(function ($governorate) {
+            return [
+                'name' => $governorate,
+            ];
+        }, $governorates);
+        Governorate::insert($governorates);
     }
 }

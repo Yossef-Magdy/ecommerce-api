@@ -1,51 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreProductRequest;
 use App\Http\Requests\Api\UpdateProductRequest;
 use App\Http\Resources\ProductDetailsResource;
-use App\Http\Resources\ProductResource;
-use App\Models\Products\Attribute;
 use App\Models\Products\Product;
 use App\Models\Products\ProductImage;
-use App\Models\Products\ProductOption;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
-class ProductsController extends Controller
+class ProductController extends Controller
 {
-    public User $user;
-
     function __construct() {
-        $this->user = Auth::user();
+        $this->authorizeResource(Product::class, 'product');
     }
-
-    public function index(Request $request)
-    {
-        $products = null;
-        if (!$request['count'] && !$request['page']) {
-            $products = ProductResource::collection(Product::all());
-        } else {
-            $products = Product::paginate($request['count'] ?? 1);
-            $products->data = ProductResource::collection($products);
-        }
-        return response()->json($products, 200);
-    }
-
-    public function show(Product $product)
-    {
-        return response()->json([
-            'message' => 'Product retrieved successfully',
-            'data' => ProductDetailsResource::make($product),
-        ]);
-    }
-
     public function store(StoreProductRequest $request)
     {
         DB::beginTransaction();
@@ -115,9 +87,6 @@ class ProductsController extends Controller
 
     public function destroy(Product $product)
     {
-        if (!Auth::user()->isAdmin() && Auth::user()->cannot('delete', $product)) {
-            return response()->json(['message' => 'forbidden'], 403);
-        }
         DB::beginTransaction();
         try {
             if ($product->images) {
@@ -136,9 +105,7 @@ class ProductsController extends Controller
                 'message' => $errors->getMessage()
             ], 500);
         }
-        return response()->json([
-            'message' => 'Product deleted successfully',
-        ]);
+        return $this->deletedResponse();
     }
 
 
@@ -165,39 +132,39 @@ class ProductsController extends Controller
 
     private function saveProductOptions($attributes, $productId)
     {
-        foreach ($attributes as $attributeData) {
-            $name = $attributeData['name'];
-            $options = $attributeData['options'];
+        // foreach ($attributes as $attributeData) {
+        //     $name = $attributeData['name'];
+        //     $options = $attributeData['options'];
 
-            $attribute = Attribute::firstOrCreate(['name' => $name]);
-            foreach ($options as $optionValue) {
-                $option = $attribute->options()->firstOrCreate(['value' => $optionValue]);
-                ProductOption::create([
-                    'product_id' => $productId,
-                    'attribute_option_id' => $option->id,
-                ]);
-            }
-        }
+        //     $attribute = Attribute::firstOrCreate(['name' => $name]);
+        //     foreach ($options as $optionValue) {
+        //         $option = $attribute->options()->firstOrCreate(['value' => $optionValue]);
+        //         ProductOption::create([
+        //             'product_id' => $productId,
+        //             'attribute_option_id' => $option->id,
+        //         ]);
+        //     }
+        // }
     }
 
 
     private function updateProductOptions($attributes, $productId)
     {
-        ProductOption::where('product_id', $productId)->delete();
+        // ProductOption::where('product_id', $productId)->delete();
 
-        foreach ($attributes as $attributeData) {
-            $attribute = Attribute::firstOrCreate(['name' => $attributeData['name']]);
+        // foreach ($attributes as $attributeData) {
+        //     $attribute = Attribute::firstOrCreate(['name' => $attributeData['name']]);
 
-            foreach ($attributeData['options'] as $optionValue) {
-                $option = $attribute->options()->firstOrCreate(['value' => $optionValue]);
+        //     foreach ($attributeData['options'] as $optionValue) {
+        //         $option = $attribute->options()->firstOrCreate(['value' => $optionValue]);
 
-                ProductOption::create([
-                    'product_id' => $productId,
-                    'attribute_option_id' => $option->id,
-                    'price' => $attributeData['name'] === 'price' ? $optionValue : null,
-                    'stock' => $attributeData['name'] === 'stock' ? $optionValue : null,
-                ]);
-            }
-        }
+        //         ProductOption::create([
+        //             'product_id' => $productId,
+        //             'attribute_option_id' => $option->id,
+        //             'price' => $attributeData['name'] === 'price' ? $optionValue : null,
+        //             'stock' => $attributeData['name'] === 'stock' ? $optionValue : null,
+        //         ]);
+        //     }
+        // }
     }
 }

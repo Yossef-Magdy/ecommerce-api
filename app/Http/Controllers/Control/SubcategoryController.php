@@ -5,22 +5,14 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreSubcategoryRequest;
 use App\Http\Requests\Control\UpdateSubcategoryRequest;
-use App\Http\Resources\SubcategoryResource;
 use App\Models\Categories\Subcategory;
-use App\Models\User;
-use Illuminate\Http\Request;
 
 class SubcategoryController extends Controller
 {
-    function __construct() {
-        $this->authorizeResource(Subcategory::class, 'subcategory');
-    }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    function __construct()
     {
-        return SubcategoryResource::collection(Subcategory::with('category')->get());
+        $this->modelName = "subcategory";
+        $this->authorizeResource(Subcategory::class, 'subcategory');
     }
 
     /**
@@ -29,16 +21,9 @@ class SubcategoryController extends Controller
     public function store(StoreSubcategoryRequest $request)
     {
         Subcategory::create($request->validated());
-        return response()->json(['message' => 'subcategory added successfully']);
+        return $this->createdResponse();
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Subcategory $subcategory)
-    {
-        return new SubcategoryResource($subcategory);
-    }
 
     /**
      * Update the specified resource in storage.
@@ -46,7 +31,7 @@ class SubcategoryController extends Controller
     public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory)
     {
         $subcategory->update($request->validated());
-        return response()->json(['message' => 'subcategory updated successfully']);
+        return $this->updatedResponse();
     }
 
     /**
@@ -55,6 +40,6 @@ class SubcategoryController extends Controller
     public function destroy(Subcategory $subcategory)
     {
         $subcategory->delete();
-        return response()->json(['message' => 'category deleted successfully']);
+        return $this->deletedResponse();
     }
 }
