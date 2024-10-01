@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('cover_image')->default('default.png');
-            $table->string('price');
+            $table->decimal('price', 8, 2);
             $table->timestamps();
         });
         Schema::create('product_category', function (Blueprint $table) {
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->string('size');
             $table->string('material');
             $table->integer('stock');
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 8, 2);
             $table->timestamps();
         });
     }

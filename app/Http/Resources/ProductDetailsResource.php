@@ -33,7 +33,7 @@ class ProductDetailsResource extends JsonResource
             'slug' => Str::slug($this->name, '-'),
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => (double) $this->price,
             'details' => $details,
             'reviews' => $reviews,
             'rating' => $averageRating,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductDetailsResource;
 use App\Models\Products\Product;
 use Illuminate\Http\Request;
 
@@ -20,6 +21,6 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {    
-        return ProductResource::make($product);
+        return ProductDetailsResource::make($product);
     }
 }

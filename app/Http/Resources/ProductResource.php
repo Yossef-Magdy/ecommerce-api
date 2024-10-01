@@ -27,7 +27,7 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'slug' => Str::slug($this->name, '-'),
             'name' => $this->name,
-            'price' => $this->price,
+            'price' => (double) $this->price,
             'discount_type' => $discount->type,
             'discount_value' => $discount->value,
             'cover_image' => Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}"),

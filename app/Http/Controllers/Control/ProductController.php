@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\StoreProductRequest;
-use App\Http\Requests\Api\UpdateProductRequest;
+use App\Http\Requests\Control\StoreProductRequest;
+use App\Http\Requests\Control\UpdateProductRequest;
 use App\Http\Resources\ProductDetailsResource;
 use App\Models\Products\Product;
 use App\Models\Products\ProductImage;
@@ -28,7 +28,7 @@ class ProductController extends Controller
                 'cover_image' => $coverPath,
             ]));
 
-            $this->saveProductOptions(json_decode($request->input('attributes'), true), $product->id);
+            // $this->saveProductOptions(json_decode($request->input('attributes'), true), $product->id);
             $this->uploadProductImages($request, $product->id);
 
             DB::commit();
@@ -67,9 +67,9 @@ class ProductController extends Controller
                 $this->uploadProductImages($request, $product->id);
             }
 
-            if ($request->has('attributes')) {
-                $this->updateProductOptions(json_decode($request->input('attributes'), true), $product->id);
-            }
+            // if ($request->has('attributes')) {
+            //    $this->updateProductOptions(json_decode($request->input('attributes'), true), $product->id);
+            // }
 
             DB::commit();
         } catch (Exception $error) {

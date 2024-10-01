@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProductReviewsController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\ProductDetailController;
+use App\Http\Controllers\Api\ShippingDetailsController;
 use App\Http\Controllers\Control\ProductReviewsController as ControlProductReviewsController;
 use App\Http\Controllers\Control\CouponController as ControlCouponController;
 use App\Http\Controllers\Control\GovernorateController as ControlGovernorateController;
@@ -48,4 +49,5 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('/shipping-details', ShippingDetailsController::class);
 });
