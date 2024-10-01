@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ShippingDetails extends Model
+class ShippingDetail extends Model
 {
     use HasFactory;
 
@@ -22,6 +22,7 @@ class ShippingDetails extends Model
         'phone_number',
         'governorate_id',
         'user_id',
+        'is_default',
     ];
 
     public function governorate(): BelongsTo
