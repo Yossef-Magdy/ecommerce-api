@@ -31,13 +31,7 @@ class OrderController extends Controller
         try {
             $data = $request->validated();
             $data['user_id'] = Auth::id();
-
-            $newOrder = Order::create($data);
-
-            // create order items
-            $newOrder->shipping()->create($data['shipping']);
-            $newOrder->payment()->create($data['payment']);
-            $newOrder->orderItems()->createMany($data['items']);
+            $coupon = null;
 
             // add coupon usage
             if (isset($data['coupon'])) {
@@ -54,24 +48,42 @@ class OrderController extends Controller
                         'message' => 'Coupon ended use'
                     ], 400);
                 }
-
-                // add coupon usage
-                $newOrder->orderCoupon()->create(['coupon_id' => $coupon->id]);
-                $coupon->decrementUsesCount();
             }
 
             // update quantities
-            foreach ($data['items'] as $item) {
-                $productDetail = ProductDetail::where('product_id', $item['product_id'])->where('id', $item['product_detail_id'])->first();
+            foreach ($data['items'] as &$item) {
+                $productDetail = ProductDetail::where('id', $item['product_detail_id'])->first();
                 
                 if ($productDetail->stock < $item['quantity']) {
                     return response()->json([
-                        'message' => 'Not enough stock'
+                        'message' => 'Not enough stock for this product' . $productDetail
                     ], 400);
                 }
                 
                 $productDetail->update(['stock' => $productDetail->stock - $item['quantity']]);
+
+                if ($productDetail->product->discount_value) {
+                    $productDetail->price = $this->discountCalculator($productDetail->product->discount_type, $productDetail->product->discount_value, $productDetail->price);
+                }
+
+                if ($coupon) {
+                    $productDetail->price = $this->discountCalculator($coupon->discount_type, $coupon->discount_value, $productDetail->price);
+                }
+
+                $item['total_price'] = $productDetail->price * $item['quantity'];
             }
+
+
+            $newOrder = Order::create($data);
+
+            // add coupon usage
+            $newOrder->orderCoupon()->create(['coupon_id' => $coupon->id]);
+            $coupon->decrementUsesCount();
+
+            // create order items
+            $newOrder->shipping()->create($data['shipping']);
+            $newOrder->payment()->create($data['payment']);
+            $newOrder->orderItems()->createMany($data['items']);
 
             // save order
             DB::commit();
@@ -99,5 +111,14 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         //
+    }
+
+    private function discountCalculator($type, $value, $price): float
+    {
+        if ($type == 'fixed') {
+            return $price - $value;
+        } else if ($type == 'percentage') {
+            return $price - ($price * $value) / 100;
+        }
     }
 }

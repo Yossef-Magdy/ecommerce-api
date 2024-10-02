@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Models\Products\ProductDetail;
+use App\Models\Products\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests\Control\StoreProductDetailRequest;
 use App\Http\Requests\Control\UpdateProductDetailRequest;
@@ -17,6 +18,9 @@ class ProductDetailController extends Controller
     public function store(StoreProductDetailRequest $request)
     {
         $data = $request->validated();
+        if (!isset($data['price'])) {
+            $data['price'] = Product::find($data['product_id'])->price;
+        }
         $productDetail = ProductDetail::create($data);
         return $this->createdResponse(ProductDetailResource::make($productDetail));
     }

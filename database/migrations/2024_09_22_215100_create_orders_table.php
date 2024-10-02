@@ -42,7 +42,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('total_price', 10, 2);
             $table->foreignId('order_id')->constrained('orders')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('product_detail_id')->constrained('product_details')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }

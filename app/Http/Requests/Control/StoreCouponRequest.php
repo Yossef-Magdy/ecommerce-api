@@ -29,4 +29,18 @@ class StoreCouponRequest extends FormRequest
             'expiry_date' => ['date', 'after:now'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'coupon_code.required' => 'Coupon code is required',
+            'coupon_code.string' => 'Coupon code must be a string',
+            'uses_count.integer' => 'Uses count must be an integer',
+            'discount_type.in' => 'Discount type must be one of: fixed, percentage',
+            'discount_value.required' => 'Discount value is required',
+            'discount_value.numeric' => 'Discount value must be a number',
+            'expiry_date.date' => 'Expiry date must be a date',
+            'expiry_date.after' => 'Expiry date must be after today',
+        ];
+    }
 }

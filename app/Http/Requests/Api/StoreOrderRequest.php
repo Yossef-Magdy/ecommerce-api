@@ -36,7 +36,7 @@ class StoreOrderRequest extends FormRequest
             'payment.method' => ['required'],
             'payment.status' => ['required'],
             'items' => ['required', 'array'],
-            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.product_detail_id' => ['required', 'exists:product_details,id'],
             'items.*.total_price' => ['required', 'numeric'],
             'items.*.quantity' => ['required', 'numeric'],
             'coupon' => ['nullable', 'exists:coupons,coupon_code'],

@@ -14,11 +14,17 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $totalOrderPrice = 0;
+
+        foreach ($this->orderItems as $item) {
+            $totalOrderPrice += $item['total_price'];
+        }
+
         return [
             'id' => $this->id,
             'paid_amount' => (float) $this->paid_amount,
             'outstanding_amount' => (float) $this->outstanding_amount,
-            // 'user' => new UserResource($this->user),
+            'total_price' => $totalOrderPrice,
             'token' => $this->token,
             'shipping' => new ShippingResource($this->shipping),
             'payment' => new PaymentResource($this->payment),

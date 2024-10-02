@@ -6,6 +6,7 @@ use App\Models\Products\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Products\ProductDetail;
 
 class OrderItem extends Model
 {
@@ -16,7 +17,7 @@ class OrderItem extends Model
         'quantity',
         'total_price',
         'order_id',
-        'product_id',
+        'product_detail_id',
     ];
 
     public function order(): BelongsTo
@@ -24,8 +25,8 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    public function product(): BelongsTo
+    public function productDetail(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        return $this->belongsTo(ProductDetail::class, 'product_detail_id', 'id')->with('product');
     }
 }
