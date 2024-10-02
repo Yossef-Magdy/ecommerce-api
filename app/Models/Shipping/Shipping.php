@@ -11,14 +11,14 @@ class Shipping extends Model
 {
     use HasFactory;
 
-    protected $table = 'shipping';
+    protected $table = 'shippings';
 
     protected $fillable = [
         'method',
         'status',
         'fee',
         'order_id',
-        'shipping_details_id',
+        'shipping_detail_id',
     ];
 
     public function order(): BelongsTo
@@ -28,6 +28,6 @@ class Shipping extends Model
 
     public function shippingDetails(): BelongsTo
     {
-        return $this->belongsTo(ShippingDetails::class, 'shipping_details_id', 'id');
+        return $this->belongsTo(ShippingDetail::class, 'shipping_detail_id', 'id');
     }
 }

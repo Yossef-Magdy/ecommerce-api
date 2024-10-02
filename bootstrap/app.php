@@ -41,11 +41,11 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
         // Error handler
-        $exceptions->render(function (Throwable $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    "message" => $e->getMessage(),
-                ], 500);
-            }
-        });
+        // $exceptions->render(function (Throwable $e, Request $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             "message" => $e->getMessage(),
+        //         ], 500);
+        //     }
+        // });
     })->create();

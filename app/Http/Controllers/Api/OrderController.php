@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Orders\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Api\StoreOrderRequest;
+use App\Http\Resources\OrderResource;
+use Illuminate\Support\Facades\DB;
+use App\Models\Coupon;
+use App\Models\Products\ProductDetail;
+
+class OrderController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return OrderResource::collection(Order::with('orderItems', 'orderCoupon.coupon')->where('user_id', Auth::id())->latest()->paginate(10));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreOrderRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+            $data['user_id'] = Auth::id();
+
+            $newOrder = Order::create($data);
+
+            // create order items
+            $newOrder->shipping()->create($data['shipping']);
+            $newOrder->payment()->create($data['payment']);
+            $newOrder->orderItems()->createMany($data['items']);
+
+            // add coupon usage
+            if (isset($data['coupon'])) {
+                // check coupon status
+                $coupon = Coupon::where('coupon_code', $data['coupon'])->first();
+                if ($coupon->isExpired()) {
+                    return response()->json([
+                        'message' => 'Coupon expired'
+                    ], 400);
+                }
+
+                if ($coupon->isUsed()) {
+                    return response()->json([
+                        'message' => 'Coupon ended use'
+                    ], 400);
+                }
+
+                // add coupon usage
+                $newOrder->orderCoupon()->create(['coupon_id' => $coupon->id]);
+                $coupon->decrementUsesCount();
+            }
+
+            // update quantities
+            foreach ($data['items'] as $item) {
+                $productDetail = ProductDetail::where('product_id', $item['product_id'])->where('id', $item['product_detail_id'])->first();
+                
+                if ($productDetail->stock < $item['quantity']) {
+                    return response()->json([
+                        'message' => 'Not enough stock'
+                    ], 400);
+                }
+                
+                $productDetail->update(['stock' => $productDetail->stock - $item['quantity']]);
+            }
+
+            // save order
+            DB::commit();
+
+            return $this->createdResponse(OrderResource::make($newOrder));
+        } catch (Exception $error) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $error->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Order $order)
+    {
+        return OrderResource::make($order);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Order $order)
+    {
+        //
+    }
+}

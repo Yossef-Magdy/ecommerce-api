@@ -10,7 +10,8 @@ class ProductDetail extends Model
 {
     use HasFactory;
     protected $fillable = ['product_id', 'color', 'size', 'material', 'stock', 'price'];
-    protected $hidden = ['product_id', 'created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at'];
+    
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

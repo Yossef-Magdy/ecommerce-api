@@ -4,13 +4,13 @@ namespace App\Models\Orders;
 
 use App\Models\Shipping\Shipping;
 use App\Models\User;
-use App\Models\Coupon;
 use App\Models\Payments\Payment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Coupon;
 
 class Order extends Model
 {
@@ -21,6 +21,7 @@ class Order extends Model
     protected $fillable = [
         'paid_amount',
         'outstanding_amount',
+        'token',
         'user_id',
     ];
 
@@ -39,9 +40,9 @@ class Order extends Model
         return $this->hasOne(Shipping::class);
     }
 
-    public function coupon(): HasOne
+    public function orderCoupon(): HasOne
     {
-        return $this->hasOne(Coupon::class);
+        return $this->hasOne(OrderCoupon::class, 'order_id', 'id')->with('coupon');
     }
 
     public function payment(): HasOne
