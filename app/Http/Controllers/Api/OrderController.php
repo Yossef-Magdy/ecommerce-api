@@ -7,6 +7,7 @@ use App\Models\Orders\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Api\StoreOrderRequest;
+use App\Http\Requests\Api\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\Coupon;
@@ -73,7 +74,7 @@ class OrderController extends Controller
                 $item['total_price'] = $productDetail->price * $item['quantity'];
             }
 
-
+            // create order
             $newOrder = Order::create($data);
 
             // add coupon usage
@@ -102,23 +103,30 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        if ($order->user_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Forbidden'
+            ], 403);
+        }
         return OrderResource::make($order);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        $newOrder = $order->update($request->validated());
+        return $this->updatedResponse($newOrder);
     }
 
     private function discountCalculator($type, $value, $price): float
     {
-        if ($type == 'fixed') {
-            return $price - $value;
-        } else if ($type == 'percentage') {
-            return $price - ($price * $value) / 100;
+        switch ($type) {
+            case 'fixed':
+                return $price - $value;
+            case 'percentage':
+                return $price - ($price * $value) / 100;
         }
     }
 }
