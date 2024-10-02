@@ -20,7 +20,7 @@ class ProductDetailsResource extends JsonResource
         $averageRating = $reviews->avg('rating');
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
         $cover = Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}");
-        $details = $this->details;
+        $details = ProductDetailResource::collection($this->details);
         $discount = $this->discount;
         if (!isset($discount)) {
             $discount = new ProductDiscount([
