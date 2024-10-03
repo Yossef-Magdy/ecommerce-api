@@ -16,11 +16,11 @@ class ProductDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $reviews = $this->reviews;
+        $reviews = ProductReviewResource::collection($this->reviews);
         $averageRating = $reviews->avg('rating');
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
         $cover = Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}");
-        $details = $this->details;
+        $details = ProductDetailResource::collection($this->details);
         $discount = $this->discount;
         if (!isset($discount)) {
             $discount = new ProductDiscount([
@@ -30,10 +30,10 @@ class ProductDetailsResource extends JsonResource
         } 
         return [
             'id' => $this->id,
-            'slug' => Str::slug($this->name, '-'),
+            'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => (double) $this->price,
             'details' => $details,
             'reviews' => $reviews,
             'rating' => $averageRating,

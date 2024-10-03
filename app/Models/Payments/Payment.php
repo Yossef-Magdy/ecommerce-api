@@ -13,7 +13,7 @@ class Payment extends Model
 
     public $timestamps = false;
     
-    protected $table = 'payment';
+    protected $table = 'payments';
 
     protected $fillable = [
         'amount',

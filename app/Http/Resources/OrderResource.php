@@ -14,6 +14,24 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $totalOrderPrice = 0;
+
+        foreach ($this->orderItems as $item) {
+            $totalOrderPrice += $item['total_price'];
+        }
+
+        return [
+            'id' => $this->id,
+            'paid_amount' => (float) $this->paid_amount,
+            'outstanding_amount' => (float) $this->outstanding_amount,
+            'total_price' => $totalOrderPrice,
+            'token' => $this->token,
+            'shipping' => new ShippingResource($this->shipping),
+            'payment' => new PaymentResource($this->payment),
+            'coupon' => $this->orderCoupon ? new CouponResource($this->orderCoupon->coupon) : null,
+            'items' => OrderItemResource::collection($this->orderItems),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
+        ];
     }
 }

@@ -7,15 +7,18 @@ use App\Http\Controllers\Api\ProductReviewsController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\ProductDetailController;
+use App\Http\Controllers\Api\ShippingDetailsController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Control\ProductReviewsController as ControlProductReviewsController;
 use App\Http\Controllers\Control\CouponController as ControlCouponController;
 use App\Http\Controllers\Control\GovernorateController as ControlGovernorateController;
 use App\Http\Controllers\Control\UserController;
 use App\Http\Controllers\Control\CategoryController as ControlCategoryController;
 use App\Http\Controllers\Control\SubcategoryController as ControlSubcategoryController;
-use App\Http\Controllers\Control\OrderController;
+use App\Http\Controllers\Control\OrderController as ControlOrderController;
 use App\Http\Controllers\Control\ProductController as ControlProductController;
 use App\Http\Controllers\Control\ProductDiscountController;
+use App\Http\Controllers\Control\ProductDetailController as ControlProductDetailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 
@@ -38,14 +41,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('control')->group(function () {
         Route::apiResource('/users', UserController::class);
         Route::apiResource('/products', ControlProductController::class)->except(['index', 'show']);
+        Route::apiResource('/product-details', ControlProductDetailController::class)->except(['index', 'show']);
         Route::apiResource('/discounts', ProductDiscountController::class);
         Route::apiResource('/categories', ControlCategoryController::class)->except(['index', 'show']);
         Route::apiResource('/coupons', ControlCouponController::class)->except(['show']);
         Route::apiResource('/subcategories', ControlSubcategoryController::class)->except(['index', 'show']);
-        Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'update']);
+        Route::apiResource('/orders', ControlOrderController::class)->only(['index', 'show', 'update']);
         Route::apiResource('/governorates', ControlGovernorateController::class)->except(['index', 'show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('/shipping-details', ShippingDetailsController::class);
+    Route::apiResource('/orders', OrderController::class)->only(['index', 'store','show', 'update']);
 });

@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Categories\Category;
+use App\Models\Categories\Subcategory;
 
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'price', 'cover_image'];
+    protected $fillable = ['name', 'description', 'price', 'cover_image', 'slug'];
 
     public function images(): HasMany
     {
@@ -27,18 +29,23 @@ class Product extends Model
         return $this->hasMany(ProductReview::class);
     }
 
-    public function categories(): HasMany
+    public function categories()
     {
-        return $this->hasMany(ProductCategory::class);
+        return $this->belongsToMany(Category::class, 'product_category');
     }
 
-    public function subcategories(): HasMany
+    public function subcategories()
     {
-        return $this->hasMany(ProductSubcategory::class);
+        return $this->belongsToMany(Subcategory::class, 'product_subcategory');
     }
 
     public function details(): HasMany
     {
         return $this->hasMany(ProductDetail::class);
+    }
+
+    public function getBySlug($slug)
+    {
+        return $this->where('slug', $slug)->firstOrFail();
     }
 }

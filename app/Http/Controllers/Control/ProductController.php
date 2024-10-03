@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\StoreProductRequest;
-use App\Http\Requests\Api\UpdateProductRequest;
+use App\Http\Requests\Control\StoreProductRequest;
+use App\Http\Requests\Control\UpdateProductRequest;
 use App\Http\Resources\ProductDetailsResource;
 use App\Models\Products\Product;
 use App\Models\Products\ProductImage;
@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -26,10 +27,14 @@ class ProductController extends Controller
 
             $product = Product::create(array_merge($request->all(), [
                 'cover_image' => $coverPath,
+                'slug' => Str::slug($request['name'], '-'),
             ]));
 
-            $this->saveProductOptions(json_decode($request->input('attributes'), true), $product->id);
             $this->uploadProductImages($request, $product->id);
+
+            // Add product categories and subcategories
+            $product->categories()->attach($request['categories']);
+            $product->subcategories()->attach($request['subcategories']);
 
             DB::commit();
         } catch (Exception $error) {
@@ -50,13 +55,18 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $product = Product::findOrFail($id);
+            $data = $request->validated();
 
             if ($request->hasFile('cover_image')) {
                 Storage::delete($product->cover_image);
                 $product->cover_image = $request->file('cover_image')->store('', 'product_cover');
             }
 
-            $product->update($request->except(['cover_image', 'product_images', 'attributes']));
+            $product->update($request->except(['cover_image', 'product_images']));
+            
+            // Edit product categories and subcategories
+            $product->categories()->sync($request['categories']);
+            $product->subcategories()->sync($request['subcategories']);
 
             if ($request->hasFile('product_images')) {
                 if ($product->images) {
@@ -67,22 +77,18 @@ class ProductController extends Controller
                 $this->uploadProductImages($request, $product->id);
             }
 
-            if ($request->has('attributes')) {
-                $this->updateProductOptions(json_decode($request->input('attributes'), true), $product->id);
-            }
-
             DB::commit();
+
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'data' => $product,
+            ]);
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
                 'message' => $error->getMessage()
             ], 500);
         }
-
-        return response()->json([
-            'message' => 'Product updated successfully',
-            'data' => $product,
-        ]);
     }
 
     public function destroy(Product $product)
@@ -128,43 +134,5 @@ class ProductController extends Controller
                 ]);
             }
         }
-    }
-
-    private function saveProductOptions($attributes, $productId)
-    {
-        // foreach ($attributes as $attributeData) {
-        //     $name = $attributeData['name'];
-        //     $options = $attributeData['options'];
-
-        //     $attribute = Attribute::firstOrCreate(['name' => $name]);
-        //     foreach ($options as $optionValue) {
-        //         $option = $attribute->options()->firstOrCreate(['value' => $optionValue]);
-        //         ProductOption::create([
-        //             'product_id' => $productId,
-        //             'attribute_option_id' => $option->id,
-        //         ]);
-        //     }
-        // }
-    }
-
-
-    private function updateProductOptions($attributes, $productId)
-    {
-        // ProductOption::where('product_id', $productId)->delete();
-
-        // foreach ($attributes as $attributeData) {
-        //     $attribute = Attribute::firstOrCreate(['name' => $attributeData['name']]);
-
-        //     foreach ($attributeData['options'] as $optionValue) {
-        //         $option = $attribute->options()->firstOrCreate(['value' => $optionValue]);
-
-        //         ProductOption::create([
-        //             'product_id' => $productId,
-        //             'attribute_option_id' => $option->id,
-        //             'price' => $attributeData['name'] === 'price' ? $optionValue : null,
-        //             'stock' => $attributeData['name'] === 'stock' ? $optionValue : null,
-        //         ]);
-        //     }
-        // }
     }
 }

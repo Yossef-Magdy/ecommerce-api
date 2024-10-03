@@ -23,14 +23,9 @@ class Coupon extends Model
         'expiry_date',
     ];
 
-    public function orders(): HasMany
+    public function orders(): BelongsToMany
     {
-        return $this->hasMany(Order::class);
-    }
-
-    public function orber(): BelongsTo
-    {
-        return $this->belongsTo(Order::class);
+        return $this->belongsToMany(Order::class, 'order_coupon', 'coupon_id', 'order_id');
     }
 
     public function isExpired(): bool
@@ -38,14 +33,14 @@ class Coupon extends Model
         return $this->expiry_date < now();
     }
 
-    public function incrementUsesCount(): void
+    public function decrementUsesCount(): void
     {
-        $this->uses_count++;
+        $this->uses_count--;
         $this->save();
     }
 
     public function isUsed(): bool
     {
-        return $this->uses_count > 0;
+        return $this->uses_count === 0;
     }
 }

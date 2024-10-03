@@ -16,13 +16,13 @@ class Category extends Model
 
     protected $fillable = ['name'];
 
-    public function subcategories(): HasMany
-    {
-        return $this->hasMany(Subcategory::class);
-    }
-
     public function products()
     {
         return $this->belongsToMany(Product::class, 'product_category');
+    }
+
+    public function subcategories()
+    {
+        return $this->hasMany(Subcategory::class);
     }
 }
