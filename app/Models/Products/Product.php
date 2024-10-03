@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'price', 'cover_image'];
+    protected $fillable = ['name', 'description', 'price', 'cover_image', 'slug'];
 
     public function images(): HasMany
     {
@@ -40,5 +40,10 @@ class Product extends Model
     public function details(): HasMany
     {
         return $this->hasMany(ProductDetail::class);
+    }
+
+    public function getBySlug($slug)
+    {
+        return $this->where('slug', $slug)->firstOrFail();
     }
 }

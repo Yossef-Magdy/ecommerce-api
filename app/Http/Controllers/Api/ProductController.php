@@ -19,8 +19,10 @@ class ProductController extends Controller
         return ProductResource::collection(Product::all());
     }
 
-    public function show(Product $product)
-    {    
+    public function show($identifier)
+    {
+        // Get product by id or slug
+        $product = Product::where('id', $identifier)->orWhere('slug', $identifier)->firstOrFail();
         return ProductDetailsResource::make($product);
     }
 }
