@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
-use Illuminate\Http\Request;
 use App\Http\Requests\Control\UpdateOrderRequest;
+use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
@@ -34,7 +34,14 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        $newOrder = $order->update($request->validated());
-        return $this->updatedResponse($newOrder);
+        if ($request->has('shipping_status')) {
+            $order->shipping->update(['status' => $request['shipping_status']]);
+        }
+
+        if ($request->has('payment_status')) {
+            $order->payment->update(['status' => $request['payment_status']]);
+        }
+
+        return $this->updatedResponse(OrderResource::make($order));
     }
 }

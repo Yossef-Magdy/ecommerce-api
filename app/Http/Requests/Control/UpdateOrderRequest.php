@@ -22,15 +22,16 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'string', 'in:pending,processing,shipped,delivered,canceled'],
+            'shipping_status' => ['nullable', 'string', 'in:pending,processing,shipped,delivered,canceled'],
+            'payment_status' => ['nullable', 'string', 'in:pending,processing,completed,canceled'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'status.required' => 'Status is required',
-            'status.in' => 'Status must be of pending, processing, shipped, delivered, canceled',
+            'shipping_status.in' => 'Shipping status must be [ pending, processing, shipped, delivered, canceled ]',
+            'payment_status.in' => 'Payment status must be [ pending, processing, completed, canceled ]',
         ];
     }
 }

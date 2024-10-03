@@ -4,12 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Models\Products\ProductReview;
-use App\Http\Requests\Api\StoreReviewRequest;
-use App\Http\Requests\Api\UpdateReviewRequest;
 use App\Http\Resources\ProductReviewResource;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ProductReviewsController extends Controller
 {

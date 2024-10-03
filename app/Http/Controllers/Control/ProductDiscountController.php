@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ProductDiscountRequest;
+use App\Http\Requests\Control\StoreProductDiscountRequest;
 use App\Models\Products\ProductDiscount;
 use Exception;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class ProductDiscountController extends Controller
         ], 200);
     }
 
-    public function store(ProductDiscountRequest $request)
+    public function store(StoreProductDiscountRequest $request)
     {
         $produc_discount = null;
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Models\Products\ProductDetail;
 use App\Models\Products\Product;
-use Illuminate\Http\Request;
 use App\Http\Requests\Control\StoreProductDetailRequest;
 use App\Http\Requests\Control\UpdateProductDetailRequest;
 use App\Http\Resources\ProductDetailResource;

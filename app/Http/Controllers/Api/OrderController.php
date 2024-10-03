@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Api\StoreOrderRequest;
 use App\Http\Requests\Api\UpdateOrderRequest;
@@ -12,6 +11,7 @@ use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\Coupon;
 use App\Models\Products\ProductDetail;
+use Exception;
 
 class OrderController extends Controller
 {

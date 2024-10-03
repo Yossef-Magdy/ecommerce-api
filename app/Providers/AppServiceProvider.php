@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Coupon;
 use App\Models\User;
-use App\Policies\CouponPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 

@@ -1,23 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\Control;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class ProductDiscountRequest extends FormRequest
+class StoreProductDiscountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if (!Auth::check()) {
-            return false;
-        }
-
-        // Check if user authorized and is admin
-        return Auth::user()->hasRole('admin');
+        return true;
     }
 
     /**
