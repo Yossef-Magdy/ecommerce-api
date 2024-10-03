@@ -32,6 +32,10 @@ class ProductController extends Controller
 
             $this->uploadProductImages($request, $product->id);
 
+            // Add product categories and subcategories
+            $product->categories()->attach($request['categories']);
+            $product->subcategories()->attach($request['subcategories']);
+
             DB::commit();
         } catch (Exception $error) {
             DB::rollBack();
@@ -51,13 +55,18 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $product = Product::findOrFail($id);
+            $data = $request->validated();
 
             if ($request->hasFile('cover_image')) {
                 Storage::delete($product->cover_image);
                 $product->cover_image = $request->file('cover_image')->store('', 'product_cover');
             }
 
-            $product->update($request->except(['cover_image', 'product_images', 'attributes']));
+            $product->update($request->except(['cover_image', 'product_images']));
+            
+            // Edit product categories and subcategories
+            $product->categories()->sync($request['categories']);
+            $product->subcategories()->sync($request['subcategories']);
 
             if ($request->hasFile('product_images')) {
                 if ($product->images) {
@@ -69,17 +78,17 @@ class ProductController extends Controller
             }
 
             DB::commit();
+
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'data' => $product,
+            ]);
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
                 'message' => $error->getMessage()
             ], 500);
         }
-
-        return response()->json([
-            'message' => 'Product updated successfully',
-            'data' => $product,
-        ]);
     }
 
     public function destroy(Product $product)

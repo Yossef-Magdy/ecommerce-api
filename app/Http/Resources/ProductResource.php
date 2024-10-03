@@ -32,6 +32,7 @@ class ProductResource extends JsonResource
             'discount_value' => $discount->value,
             'cover_image' => Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}"),
             'images' => ProductImagesResource::collection($this->images),
+            'colors' => $this->details->pluck('color')->unique(),
         ];
     }
 }

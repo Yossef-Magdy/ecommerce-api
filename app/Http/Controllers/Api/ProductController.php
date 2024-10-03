@@ -12,17 +12,21 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request['count'] || $request['page']) {
-            $products = Product::paginate($request['count'] ?? 10);
-            return ProductResource::collection($products);
-        }
-        return ProductResource::collection(Product::all());
+        $count = $request->get('count', 10);
+
+        $products = Product::with(['categories', 'subcategories'])->paginate($count);
+
+        return ProductResource::collection($products);
     }
 
     public function show($identifier)
     {
-        // Get product by id or slug
-        $product = Product::where('id', $identifier)->orWhere('slug', $identifier)->firstOrFail();
-        return ProductDetailsResource::make($product);
+        $product = Product::with(['categories', 'subcategories'])
+            ->where('id', $identifier)
+            ->orWhere('slug', $identifier)
+            ->firstOrFail();
+
+        return new ProductDetailsResource($product);
     }
+
 }
