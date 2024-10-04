@@ -49,9 +49,9 @@ class AuthController extends Controller
                     }),
                 ];
             }),
-            'permissions' => $user->roles->flatMap(function ($role) {
-                return $role->permissions->pluck('name');
-            })->unique()->values()->all(),
+            'permissions' => $user->permissions->map(function ($permission) {
+                return $permission->name;
+            }),
         ];
     }
 }
