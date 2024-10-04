@@ -21,6 +21,7 @@ use App\Http\Controllers\Control\ProductDiscountController;
 use App\Http\Controllers\Control\ProductDetailController as ControlProductDetailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Control\AnalyticsController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -49,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/orders', ControlOrderController::class)->only(['index', 'show', 'update']);
         Route::apiResource('/governorates', ControlGovernorateController::class)->except(['index', 'show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
+        Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'show']);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
