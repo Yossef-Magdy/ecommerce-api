@@ -53,7 +53,6 @@ class DatabaseSeeder extends Seeder
             'shippings', 
             'payments', 
             'categories', 
-            'subcategories', 
             'governorates'
         ];
         $permissions = [];
