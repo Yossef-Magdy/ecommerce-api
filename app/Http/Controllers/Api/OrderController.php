@@ -78,8 +78,10 @@ class OrderController extends Controller
             $newOrder = Order::create($data);
 
             // add coupon usage
-            $newOrder->orderCoupon()->create(['coupon_id' => $coupon->id]);
-            $coupon->decrementUsesCount();
+            if ($coupon) {
+                $newOrder->orderCoupon()->create(['coupon_id' => $coupon->id]);
+                $coupon->decrementUsesCount();
+            }
 
             // create order items
             $newOrder->shipping()->create($data['shipping']);
