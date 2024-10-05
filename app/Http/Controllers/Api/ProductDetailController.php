@@ -12,7 +12,7 @@ class ProductDetailController extends Controller
     public function index(Request $request)
     {
         if ($request['count'] || $request['page']) {
-            $products = Product::paginate($request['count'] ?? 1);
+            $products = Product::paginate($request['count'] ?? 10);
             return ProductDetailsResource::collection($products);
         }
         return ProductDetailsResource::collection(Product::all());
