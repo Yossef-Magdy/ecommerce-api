@@ -8,19 +8,32 @@ use Illuminate\Http\Request;
 
 class AnalyticsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $monthSales = OrderItem::with('productDetail')
-            ->whereYear('created_at', date('Y'))
-            ->whereMonth('created_at', date('m'))
+        // Get month and year
+        $month = $request->get('month', date('m'));
+        $year = $request->get('year', date('Y'));
+
+        // Get total sales
+        $salesData = OrderItem::with('productDetail')
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->orderBy('created_at', 'asc')
             ->get();
 
-        $totalSales = number_format($monthSales->sum('total_price'), 2);
-        $totalItemsSold = $monthSales->sum('quantity');
-        $totalProductsSold = $monthSales->count();
+        // Get total sales
+        $totalSales = number_format($salesData->sum('total_price'), 2);
+        
+        // Get total items sold
+        $totalItemsSold = $salesData->sum('quantity');
 
-        $productsSold = $monthSales->groupBy('product_detail_id')
+        // Get total products sold
+        $totalProductsSold = $salesData->count();
+
+        // Get products sold
+        $productsSold = $salesData->groupBy('product_detail_id')
         ->map(function ($group) {
+            // Get product detail
             $productDetail = $group->first()->productDetail;
 
             return [
@@ -36,7 +49,9 @@ class AnalyticsController extends Controller
                 'total_price' => number_format($group->sum('total_price'), 2),
 
                 'details' => $group->map(function ($item) {
+                    // Get used coupon
                     $usedCoupon = $item?->order?->orderCoupon?->coupon;
+
                     return [
                         'order_id' => $item->order_id,
                         'quantity' => $item->quantity,
