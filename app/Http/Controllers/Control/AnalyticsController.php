@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Models\Orders\OrderItem;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -17,7 +18,8 @@ class AnalyticsController extends Controller
 
         // Get total sales
         $cacheKey = "sales_data_{$year}_{$month}";
-        $salesData = Cache::remember($cacheKey, 60, function () use ($year, $month) {
+
+        $salesData = Cache::remember($cacheKey, 3600, function () use ($year, $month) {
             return OrderItem::with(['productDetail' => function ($query) {
                 $query->select('id', 'product_id', 'color', 'size', 'material', 'stock', 'price');
             }, 'order.orderCoupon.coupon' => function ($query) {
@@ -51,7 +53,7 @@ class AnalyticsController extends Controller
                             'order_id' => $item->order_id,
                             'quantity' => $item->quantity,
                             'total_price' => number_format($item->total_price, 2),
-                            'created_at' => $item->created_at,
+                            'created_at' => Carbon::parse($item->created_at)->setTimezone('Africa/Cairo'),
                             'used_coupon' => $item?->order?->orderCoupon?->coupon ?? 'No coupon used',
                         ];
                     }),

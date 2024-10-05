@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\OrderObserver;
+use App\Models\Orders\Order;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +31,7 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        Order::observe(OrderObserver::class);
     }
 }
