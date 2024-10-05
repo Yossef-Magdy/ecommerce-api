@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\ProductDetailController;
 use App\Http\Controllers\Api\ShippingDetailsController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Control\ProductReviewsController as ControlProductReviewsController;
 use App\Http\Controllers\Control\CouponController as ControlCouponController;
 use App\Http\Controllers\Control\GovernorateController as ControlGovernorateController;
@@ -34,6 +35,7 @@ Route::apiResource('/categories', CategoryController::class)->only(['index', 'sh
 Route::apiResource('/subcategories', SubcategoryController::class)->only(['index', 'show']);
 Route::apiResource('/coupons', CouponController::class)->only(['show']);
 Route::apiResource('/governorates', GovernorateController::class)->only(['index', 'show']);
+Route::get('/search', [SearchController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
