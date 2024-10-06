@@ -25,7 +25,7 @@ class ProductResource extends JsonResource
         } 
         return [
             'id' => $this->id,
-            'slug' => Str::slug($this->name, '-'),
+            'slug' => $this->slug,
             'name' => $this->name,
             'price' => (double) $this->price,
             'discount_type' => $discount->type,
