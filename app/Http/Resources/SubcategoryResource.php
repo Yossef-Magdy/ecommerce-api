@@ -14,9 +14,11 @@ class SubcategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $image = $this->products->first()?->cover_image;
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'image' =>  $image ? asset("cover/{$image}") : null,
             'category' => new CategoryResource($this->category),
         ];
     }
