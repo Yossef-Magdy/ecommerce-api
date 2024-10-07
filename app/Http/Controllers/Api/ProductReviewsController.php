@@ -21,12 +21,12 @@ class ProductReviewsController extends Controller
     public function index(ProductReviewsRequest $request)
     {
         $reviews = ProductReview::all()->where('product_id', $request->product_id);
-        return response()->json(ProductReviewResource::collection($reviews), 200);
+        return ProductReviewResource::collection($reviews);
     }
 
     public function show(ProductReview $review)
     {
-        return response()->json(ProductReviewResource::make($review), 200);
+        return ProductReviewResource::make($review);
     }
 
     public function store(StoreReviewRequest $request)
