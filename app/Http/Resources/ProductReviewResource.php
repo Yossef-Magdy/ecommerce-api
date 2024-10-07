@@ -19,7 +19,7 @@ class ProductReviewResource extends JsonResource
             'rating' => $this->rating,
             'reviewer' => $this->user->first_name . ' ' . $this->user->last_name,
             'comment' => $this->comment,
-            'date_created' => $this->date_created,
+            'created_at' => $this->created_at,
         ];
     }
 }
