@@ -23,7 +23,7 @@ class StoreReviewRequest extends FormRequest
     {
         return [
             'product_id' => ['required', 'exists:products,id'],
-            'rating' => ['required', 'integer', 'between:1,5'],
+            'rating' => ['required', 'numeric', 'between:1,5'],
             'comment' => ['required', 'string'],
         ];
     }
@@ -39,7 +39,7 @@ class StoreReviewRequest extends FormRequest
             'product_id.required' => 'Product ID is required',
             'product_id.exists' => 'Product not found',
             'rating.required' => 'Rating is required',
-            'rating.integer' => 'Rating must be an integer',
+            'rating.numeric' => 'Rating must be a number',
             'rating.between' => 'Rating must be between 1 and 5',
             'comment.required' => 'Comment is required',
             'comment.string' => 'Comment must be a string',
