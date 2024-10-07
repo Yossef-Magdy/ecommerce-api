@@ -23,6 +23,8 @@ use App\Http\Controllers\Control\ProductDetailController as ControlProductDetail
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Control\AnalyticsController;
+use App\Http\Controllers\Control\PermissionController;
+use App\Http\Controllers\Control\RoleController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -53,6 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/governorates', ControlGovernorateController::class)->except(['index', 'show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
         Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'show']);
+        Route::apiResource('/roles', RoleController::class);
+        Route::apiResource('/permissions', PermissionController::class);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
