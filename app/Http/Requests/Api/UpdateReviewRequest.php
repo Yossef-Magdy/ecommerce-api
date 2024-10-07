@@ -23,7 +23,7 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rating' => ['required', 'integer', 'between:1,5'],
+            'rating' => ['required', 'numeric', 'between:1,5'],
             'comment' => ['required', 'string'],
         ];
     }
@@ -36,7 +36,7 @@ class UpdateReviewRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'rating.integer' => 'Rating must be an integer',
+            'rating.integer' => 'Rating must be a number',
             'rating.between' => 'Rating must be between 1 and 5',
             'comment.string' => 'Comment must be a string',
         ];
