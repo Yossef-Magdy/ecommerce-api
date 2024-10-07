@@ -50,7 +50,7 @@ class ProductReviewsController extends Controller
     public function update(UpdateReviewRequest $request, ProductReview $review)
     {
         $review->update($request->validated());
-        $data = ProductReviewResource::make($review);
+        $data = ProductReviewResource::make($review->refresh());
         return $this->updatedResponse($data);
     }
 
