@@ -24,4 +24,16 @@ class ProductDiscount extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function isExpired(): bool
+    {
+        return $this->expiry_date < now();
+    }
+
+    // change status to closed before expiry
+    public function close()
+    {
+        $this->status = 'closed';
+        $this->save();
+    }
 }

@@ -21,14 +21,8 @@ class ProductDetailsResource extends JsonResource
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
         $cover = Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}");
         $details = ProductDetailResource::collection($this->details);
-        $discount = $this->discount;
-        if (!isset($discount)) {
-            $discount = new ProductDiscount([
-                'type' => 'fixed',
-                'value' => 0,
-            ]);
-        } 
-        return [
+
+        $data = [
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
@@ -39,11 +33,20 @@ class ProductDetailsResource extends JsonResource
             'rating' => $averageRating,
             'categories' => CategoryResource::collection($this->categories),
             'sub_categories' => SubcategoryResource::collection($this->subcategories),
-            'discount_type' => $discount->type,
-            'discount_value' => $discount->value,
             'cover_image' => $cover,
             'images' => ProductImagesResource::collection($this->images),
         ];
+
+        if ($this->discount) {
+            if ($this->discount->isExpired()) {
+                $this->discount->close();
+            } else {
+                $data['discount_type'] = $this->discount->type;
+                $data['discount_value'] = $this->discount->value;
+            }
+        };
+
+        return $data;
     }
 
 }

@@ -27,7 +27,7 @@ class AnalyticsController extends Controller
             }])
                 ->whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
-                ->select('id', 'order_id', 'product_detail_id', 'quantity', 'total_price', 'created_at')
+                ->select('id', 'order_id', 'product_detail_id', 'quantity', 'total_price', 'discount', 'created_at')
                 ->orderBy('created_at', 'asc')
                 ->get();
         });
@@ -52,6 +52,7 @@ class AnalyticsController extends Controller
                         return [
                             'order_id' => $item->order_id,
                             'quantity' => $item->quantity,
+                            'discount' => number_format($item->discount, 2),
                             'total_price' => number_format($item->total_price, 2),
                             'created_at' => Carbon::parse($item->created_at)->setTimezone('Africa/Cairo'),
                             'used_coupon' => $item?->order?->orderCoupon?->coupon ?? 'No coupon used',

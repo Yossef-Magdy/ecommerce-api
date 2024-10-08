@@ -33,7 +33,7 @@ class OrderController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
             $coupon = null;
-
+            
             // add coupon usage
             if (isset($data['coupon'])) {
                 // check coupon status
@@ -63,12 +63,15 @@ class OrderController extends Controller
                 
                 $productDetail->update(['stock' => $productDetail->stock - $item['quantity']]);
 
-                if ($productDetail->product->discount_value) {
-                    $productDetail->price = $this->discountCalculator($productDetail->product->discount_type, $productDetail->product->discount_value, $productDetail->price);
+                $item_discount = $productDetail->product->discount;
+                if ($item_discount && !$item_discount->isExpired()) {
+                    $discount = $this->discountCalculator($item_discount->type, $item_discount->value, $productDetail->price);
+                    $productDetail->price -= $discount;
+                    $item['discount'] = $discount;
                 }
 
                 if ($coupon) {
-                    $productDetail->price = $this->discountCalculator($coupon->discount_type, $coupon->discount_value, $productDetail->price);
+                    $productDetail->price -= $this->discountCalculator($coupon->discount_type, $coupon->discount_value, $productDetail->price);
                 }
 
                 $item['total_price'] = $productDetail->price * $item['quantity'];
@@ -126,9 +129,11 @@ class OrderController extends Controller
     {
         switch ($type) {
             case 'fixed':
-                return $price - $value;
+                return $value;
             case 'percentage':
-                return $price - ($price * $value) / 100;
+                return ($price * $value) / 100;
+            default:
+                return 0;
         }
     }
 }
