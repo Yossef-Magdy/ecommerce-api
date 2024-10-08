@@ -18,7 +18,7 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'image' =>  $image ? asset("cover/{$image}") : null,
+            'image' =>  $image ? asset("cover/{$image}") : asset('default.png'),
         ];
     }
 }
