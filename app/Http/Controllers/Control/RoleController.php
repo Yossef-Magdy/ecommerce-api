@@ -32,6 +32,7 @@ class RoleController extends Controller
     public function store(StoreRoleRequest $request)
     {
         Role::create($request->validated());
+        return $this->createdResponse();
     }
 
     /**
@@ -48,6 +49,7 @@ class RoleController extends Controller
     public function update(UpdateRoleRequest $request, Role $role)
     {
         $role->update($request->validated());
+        return $this->updatedResponse();
     }
 
     /**
@@ -56,5 +58,6 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
+        return $this->deletedResponse();
     }
 }

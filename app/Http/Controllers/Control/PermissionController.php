@@ -26,14 +26,6 @@ class PermissionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePermissionRequest $request)
-    {
-        Permission::create($request->validated());
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Permission $permission)
@@ -41,20 +33,4 @@ class PermissionController extends Controller
         return PermissionResource::make($permission);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Permission $permission)
-    {
-        $permission->update($request->validated());
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Permission $permission)
-    {
-        $permission->delete();
-    }
 }
