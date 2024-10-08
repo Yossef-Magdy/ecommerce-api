@@ -14,7 +14,7 @@ class ProductController extends Controller
     {
         $count = $request->get('count', 10);
 
-        $products = Product::with(['categories', 'subcategories'])->paginate($count);
+        $products = Product::with(['categories', 'subcategories', 'details:product_id,color', 'images', 'discount'])->paginate($count);
 
         return ProductResource::collection($products);
     }

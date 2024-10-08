@@ -23,7 +23,7 @@ class ProductResource extends JsonResource
             'price' => (double) $this->price,
             'cover_image' => Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}"),
             'hover_image' => isset($this->images[0]) ? asset("images/{$this->images[0]->image_url}") : null,
-            'colors' => $this->details->pluck('color')->unique(),
+            'colors' => $this->details->pluck('color')->unique()->values()->all(),
         ];
 
         if ($this->discount) {
