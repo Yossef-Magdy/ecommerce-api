@@ -57,7 +57,7 @@ class AnalyticsController extends Controller
                             'created_at' => Carbon::parse($item->created_at)->setTimezone('Africa/Cairo'),
                             'used_coupon' => $item?->order?->orderCoupon?->coupon ?? 'No coupon used',
                         ];
-                    }),
+                    })->sortByDesc('created_at')->values(),
                 ];
             })->values();
 
