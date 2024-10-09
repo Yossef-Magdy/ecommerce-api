@@ -8,10 +8,8 @@ use App\Models\Orders\Order;
 use App\Models\Roles\Role;
 use App\Models\Products\ProductReview;
 use App\Models\Roles\Permission;
-use App\Models\Roles\UserRole;
-use App\Models\Shipping\ShippingDetails;
+use App\Models\Shipping\ShippingDetail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,7 +56,7 @@ class User extends Authenticatable
     
     public function shippingDetails(): HasMany
     {
-        return $this->hasMany(ShippingDetails::class);
+        return $this->hasMany(ShippingDetail::class);
     }
 
     /**

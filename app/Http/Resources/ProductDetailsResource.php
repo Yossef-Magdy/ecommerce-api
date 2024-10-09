@@ -19,7 +19,6 @@ class ProductDetailsResource extends JsonResource
         $reviews = ProductReviewResource::collection($this->reviews);
         $averageRating = $reviews->avg('rating');
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
-        $cover = Str::startsWith($this->cover_image, 'http') ? $this->cover_image : asset("cover/{$this->cover_image}");
         $details = ProductDetailResource::collection($this->details);
 
         $data = [
@@ -33,7 +32,7 @@ class ProductDetailsResource extends JsonResource
             'rating' => $averageRating,
             'categories' => CategoryResource::collection($this->categories),
             'sub_categories' => SubcategoryResource::collection($this->subcategories),
-            'cover_image' => $cover,
+            'cover_image' => asset("cover/{$this->cover_image}"),
             'images' => ProductImagesResource::collection($this->images),
         ];
 

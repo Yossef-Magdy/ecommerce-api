@@ -15,6 +15,9 @@ use Exception;
 
 class OrderController extends Controller
 {
+    function __construct() {
+        $this->modelName = "order";
+    }
     /**
      * Display a listing of the resource.
      */
@@ -57,7 +60,7 @@ class OrderController extends Controller
                 
                 if ($productDetail->stock < $item['quantity']) {
                     return response()->json([
-                        'message' => 'Not enough stock for this product' . $productDetail
+                        'message' => 'Not enough stock for this product'
                     ], 400);
                 }
                 
@@ -87,8 +90,9 @@ class OrderController extends Controller
             }
 
             // create order items
-            $newOrder->shipping()->create($data['shipping']);
-            $newOrder->payment()->create($data['payment']);
+            $newOrder->shipping()->create(['shipping_detail_id' => $data['shipping_detail_id']]);
+            $newOrder->payment()->create(['method' => $data['payment_method']]);
+
             $newOrder->orderItems()->createMany($data['items']);
 
             // save order

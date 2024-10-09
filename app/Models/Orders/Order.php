@@ -21,8 +21,6 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-        'paid_amount',
-        'outstanding_amount',
         'token',
         'user_id',
     ];

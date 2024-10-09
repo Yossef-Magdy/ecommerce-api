@@ -14,9 +14,7 @@ class Shipping extends Model
     protected $table = 'shippings';
 
     protected $fillable = [
-        'method',
         'status',
-        'fee',
         'order_id',
         'shipping_detail_id',
     ];
