@@ -22,8 +22,8 @@ class OrderResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'paid_amount' => (float) $this->paid_amount,
-            'outstanding_amount' => (float) $this->outstanding_amount,
+            'paid_amount' => (float) $this->payment->paid_amount,
+            'outstanding_amount' => (float) $this->payment->outstanding_amount,
             'total_price' => $totalOrderPrice,
             'token' => $this->token,
             'shipping' => new ShippingResource($this->shipping),
