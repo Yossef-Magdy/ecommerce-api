@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BestSellerController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\GovernorateController;
@@ -38,6 +39,7 @@ Route::apiResource('/subcategories', SubcategoryController::class)->only(['index
 Route::apiResource('/coupons', CouponController::class)->only(['show']);
 Route::apiResource('/governorates', GovernorateController::class)->only(['index', 'show']);
 Route::get('/search', [SearchController::class, 'index']);
+Route::get('/best-seller', [BestSellerController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
