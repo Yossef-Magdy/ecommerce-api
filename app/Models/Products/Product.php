@@ -48,4 +48,9 @@ class Product extends Model
     {
         return $this->where('slug', $slug)->firstOrFail();
     }
+
+    public function hasDiscount(): bool
+    {
+        return $this->discount()->exists();
+    }
 }
