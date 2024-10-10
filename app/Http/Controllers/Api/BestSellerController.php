@@ -12,25 +12,20 @@ class BestSellerController extends Controller
     public function index()
     {
         $bestSellingProducts = OrderItem::select('product_detail_id', DB::raw('SUM(quantity) as total_quantity'))
-        ->groupBy('product_detail_id')
-        ->orderBy('total_quantity', 'desc')
-        ->limit(10)
-        ->with([
-            'productDetail.product' => function ($query) {
+            ->with(['productDetail.product' => function ($query) {
                 $query->select('id', 'slug', 'name', 'price', 'cover_image');
-            },
-            'productDetail.product.discount' => function ($query) {
-                $query->select('id', 'product_id', 'status', 'type', 'value');
-            },
-            'productDetail.product.details' => function ($query) {
-                $query->select('id', 'product_id', 'color');
-            },
-            'productDetail.product.images' => function ($query) {
-                $query->select('id', 'product_id', 'image_url');
-            },
-        ])
-        ->get()
-        ->unique('productDetail.product.id');
+            }, 'productDetail.product.discount' => function ($query) {
+                $query->select('product_id', 'status', 'type', 'value');
+            }, 'productDetail.product.details' => function ($query) {
+                $query->select('product_id', 'color');
+            }, 'productDetail.product.images' => function ($query) {
+                $query->select('product_id', 'image_url');
+            }])
+            ->groupBy('product_detail_id')
+            ->orderBy('total_quantity', 'desc')
+            ->limit(10)
+            ->get()
+            ->unique('productDetail.product.id');
 
         return response()->json(BestSellerResource::collection($bestSellingProducts), 200);
     }
