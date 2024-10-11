@@ -7,7 +7,9 @@ use App\Http\Requests\Control\StoreRoleRequest;
 use App\Http\Requests\Control\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Roles\Role;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -31,7 +33,17 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        Role::create($request->validated());
+        DB::beginTransaction();
+        try {
+            $role = Role::create($request->validated());
+            $role->permissions()->attach($request->permissions);
+            DB::commit();
+        } catch (Exception $error) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $error->getMessage()
+            ], 500);
+        }
         return $this->createdResponse();
     }
 
@@ -48,7 +60,17 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        $role->update($request->validated());
+        DB::beginTransaction();
+        try {
+            $role->update($request->validated());
+            $role->permissions()->sync($request->permissions);
+            DB::commit();
+        } catch (Exception $error) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $error->getMessage()
+            ], 500);
+        }
         return $this->updatedResponse();
     }
 
