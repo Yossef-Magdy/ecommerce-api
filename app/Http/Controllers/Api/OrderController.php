@@ -11,10 +11,12 @@ use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\Coupon;
 use App\Models\Products\ProductDetail;
+use App\Models\Shipping\ShippingDetail;
 use Exception;
 
 use Stripe\Stripe;
 use Stripe\Charge;
+use Stripe\PaymentIntent;
 
 class OrderController extends Controller
 {
@@ -39,119 +41,245 @@ class OrderController extends Controller
         try {
             $data = $request->validated();
             $data['user_id'] = Auth::id();
-            $coupon = null;
-            $charge = null;
+            $coupon = $this->validateCoupon($data['coupon'] ?? null);
             $dilevryCharge = 10;
 
-            // add coupon usage
-            if (isset($data['coupon'])) {
-                // check coupon status
-                $coupon = Coupon::where('coupon_code', $data['coupon'])->first();
-                if ($coupon->isExpired()) {
-                    return response()->json([
-                        'message' => 'Coupon expired'
-                    ], 400);
-                }
+            $this->updateProductQuantities($data['items'], $coupon);
 
-                if ($coupon->isUsed()) {
-                    return response()->json([
-                        'message' => 'Coupon ended use'
-                    ], 400);
-                }
-            }
-
-            // update quantities
-            foreach ($data['items'] as &$item) {
-                $productDetail = ProductDetail::where('id', $item['product_detail_id'])->first();
-
-                if ($productDetail->stock < $item['quantity']) {
-                    return response()->json([
-                        'message' => 'Not enough stock for this product'
-                    ], 400);
-                }
-
-                $productDetail->update(['stock' => $productDetail->stock - $item['quantity']]);
-
-                $item_discount = $productDetail->product->discount;
-                if ($item_discount && !$item_discount->isExpired()) {
-                    $discount = $this->discountCalculator($item_discount->type, $item_discount->value, $productDetail->price);
-                    $productDetail->price -= $discount;
-                    $item['discount'] = $discount;
-                }
-
-                if ($coupon) {
-                    $productDetail->price -= $this->discountCalculator($coupon->discount_type, $coupon->discount_value, $productDetail->price);
-                }
-
-                $item['total_price'] = $productDetail->price * $item['quantity'];
-            }
-
+            // Create order
+            $newOrder = Order::create($data);
             $amount = array_sum(array_column($data['items'], 'total_price'));
-            
-            // create stripe charge
-            if ($data['payment_method'] == 'stripe') {
-                // Stripe Keys
-                // STRIPE_SECRET_KEY=sk_test_51Q8SaRAYDkqV8OSb7fqS6WHUrsDT2vGmQIG3O4NDUnVuGPFuPNLW2qv3CdcyXRenEguzK4EQHzt9x8mBbUNrB9gc00UHuyenxB
-                // STRIPE_PUBLISHABLE_KEY=pk_test_51Q8SaRAYDkqV8OSb7CBmUOUII185BHQ98c7m36pxUrm8S6KZCbThC7oukcr2ihfQIzpLq1btA19H4Si0EvgFIMqK00Jif1q77f
-                Stripe::setApiKey(config('stripe.api_key.secret'));
-                $charge = Charge::create([
-                    'amount' => $amount * 100,
-                    'currency' => $data['currency'],
-                    'source' => $data['stripeToken'],
-                    'description' => 'Payment for order',
-                    'receipt_email' => Auth::user()->email,
-                ]);
-                
-                // Check if charge is successful
+
+            // Create Stripe charge if payment method is Stripe Method 1
+            $charge = null;
+            if ($data['payment_method'] === 'stripe') {
+                $charge = $this->createStripeCharge($data, $newOrder->id, $amount);
                 if ($charge->status !== 'succeeded') {
                     throw new Exception('Payment failed');
                 }
             }
 
-            // create order
-            $newOrder = Order::create($data);
+            // Make payment intent if payment method is Stripe Method 2
+            $paymentIntent = null;
+            // if ($data['payment_method'] === 'stripe') {
+            //     $paymentIntent = $this->createPaymentIntent($data, $newOrder->id, $amount);
 
-            // add coupon usage
+            //     if ($paymentIntent->status === 'requires_payment_method') {
+            //         throw new Exception('Payment requires additional payment method.');
+            //     }
+
+            //     if ($paymentIntent->status !== 'succeeded') {
+            //         throw new Exception('Payment failed: ' . $paymentIntent);
+            //     }
+            // }
+
+
+            // Add coupon usage
             if ($coupon) {
                 $newOrder->orderCoupon()->create(['coupon_id' => $coupon->id]);
                 $coupon->decrementUsesCount();
             }
 
-            // create order items
+            // Create order items and shipping
             $newOrder->shipping()->create(['shipping_detail_id' => $data['shipping_detail_id']]);
             $newOrder->orderItems()->createMany($data['items']);
 
-            // create payment
-            if ($data['payment_method'] == 'stripe') {
-                $newOrder->payment()->create([
-                    'method' => $data['payment_method'],
-                    'paid_amount' => $charge->amount_captured / 100,
-                    'outstand_amount' => $amount - ($charge->amount_captured / 100),
-                    'status' => $charge->status
-                ]);    
-            } else {
-                $newOrder->payment()->create([
-                    'method' => $data['payment_method'],
-                    'outstand_amount' => $amount + $dilevryCharge, // add delivery charge
-                ]);
-            }
+            // Create payment record
 
-            // save order
+            // Method 1
+            $this->createPaymentRecord($newOrder, $data['payment_method'], $amount, $charge ?? null, $dilevryCharge);
+            
+            // Method 2
+            // $this->createPaymentIntentRecord($newOrder, $data['payment_method'], $amount, $paymentIntent ?? null, $dilevryCharge);
+            
             DB::commit();
 
             return response()->json([
                 'message' => 'Order created successfully',
                 'data' => OrderResource::make($newOrder),
-                'charge' => $charge,
-                'success' => true
+                'success' => true,
+
+                // Method 1
+                'charge' => $charge ?? null,
+
+                // Method 2
+                // 'paymentIntent' => $paymentIntent ?? null,
+                
             ]);
-            // return $this->createdResponse(OrderResource::make($newOrder));
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
                 'message' => $error->getMessage(),
                 'success' => false
             ], 400);
+        }
+    }
+
+    private function validateCoupon($couponCode)
+    {
+        if (!$couponCode) return null;
+
+        $coupon = Coupon::where('coupon_code', $couponCode)->firstOrFail();
+
+        if ($coupon->isExpired()) {
+            throw new Exception('Coupon expired');
+        }
+
+        if ($coupon->isUsed()) {
+            throw new Exception('Coupon ended use');
+        }
+
+        return $coupon;
+    }
+
+    private function updateProductQuantities(array &$items, $coupon)
+    {
+        foreach ($items as &$item) {
+            $productDetail = ProductDetail::findOrFail($item['product_detail_id']);
+
+            if ($productDetail->stock < $item['quantity']) {
+                throw new Exception('Not enough stock for this product');
+            }
+
+            $productDetail->decrement('stock', $item['quantity']);
+
+            $item_discount = $productDetail->product->discount;
+            if ($item_discount && !$item_discount->isExpired()) {
+                $discount = $this->discountCalculator($item_discount->type, $item_discount->value, $productDetail->price);
+                $productDetail->price -= $discount;
+                $item['discount'] = $discount;
+            }
+
+            if ($coupon) {
+                $item['discount'] += $this->discountCalculator($coupon->discount_type, $coupon->discount_value, $productDetail->price);
+            }
+
+            $item['total_price'] = $productDetail->price * $item['quantity'];
+        }
+    }
+
+    private function createStripeCharge($data, $orderId, $amount)
+    {
+        Stripe::setApiKey(config('stripe.api_key.secret'));
+
+        $shippingDetail = ShippingDetail::findOrFail($data['shipping_detail_id']);
+
+        return Charge::create([
+            'amount' => $amount * 100,
+            'currency' => $data['currency'],
+            'description' => 'Payment for order #' . $orderId,
+            'statement_descriptor' => 'ELEGANT wear',
+            'source' => $data['stripeToken'],
+            'receipt_email' => Auth::user()->email,
+            'metadata' => [
+                'order_id' => $orderId,
+                'customer_id' => Auth::user()->id,
+                'shipping_address' => json_encode([
+                    'name' => Auth::user()->name,
+                    'email' => Auth::user()->email,
+                    'phone' => $shippingDetail->phone_number,
+                    'address' => [
+                        'line1' => $shippingDetail->address,
+                        'line2' => $shippingDetail->apartment,
+                        'city' => $shippingDetail->city,
+                        'state' => $shippingDetail->governorate->name,
+                        'postal_code' => $shippingDetail->postal_code,
+                    ],
+                ]),
+            ],
+        ]);
+    }
+
+    private function createPaymentRecord($order, $paymentMethod, $amount, $charge, $dilevryCharge)
+    {
+        if ($paymentMethod === 'stripe' && $charge) {
+            $order->payment()->create([
+                'method' => $paymentMethod,
+                'paid_amount' => $charge->amount_captured / 100,
+                'outstand_amount' => $amount - ($charge->amount_captured / 100),
+                'status' => $charge->status
+            ]);
+        } else {
+            $order->payment()->create([
+                'method' => $paymentMethod,
+                'outstand_amount' => $amount + $dilevryCharge, // add delivery charge
+            ]);
+        }
+    }
+
+    private function createPaymentIntent($data, $orderId, $amount)
+    {
+        Stripe::setApiKey(config('stripe.api_key.secret'));
+
+        $shippingDetail = ShippingDetail::findOrFail($data['shipping_detail_id']);
+
+        $paymentIntent = PaymentIntent::create([
+            'amount' => $amount * 100,
+            'currency' => $data['currency'],
+            'description' => 'Payment for order #' . $orderId,
+            'receipt_email' => Auth::user()->email,
+            'metadata' => [
+                'order_id' => $orderId,
+                'customer_id' => Auth::user()->id,
+            ],
+            'payment_method_data' => [
+                'type' => 'card',
+                'card' => [
+                    'token' => $data['stripeToken'],
+                ],
+            ],
+            'shipping' => [
+                'name' => Auth::user()->first_name,
+                'phone' => Auth::user()->phone_number,
+                'address' => [
+                    'line1' => $shippingDetail->address,
+                    'line2' => $shippingDetail->apartment,
+                    'city' => $shippingDetail->city,
+                    'state' => $shippingDetail->governorate->name,
+                    'postal_code' => $shippingDetail->postal_code,
+                ],
+            ],
+            'automatic_payment_methods' => [
+                'enabled' => true,
+                'allow_redirects' => 'never',
+            ],
+        ]);
+
+        if ($paymentIntent->status === 'requires_confirmation') {
+            $paymentIntent->confirm();
+        }
+
+        return $paymentIntent;
+    }
+
+
+    private function createPaymentIntentRecord($order, $paymentMethod, $amount, $paymentIntent, $dilevryCharge)
+    {
+        if ($paymentMethod === 'stripe' && $paymentIntent) {
+            $order->payment()->create([
+                'method' => $paymentMethod,
+                'paid_amount' => $paymentIntent->amount_captured / 100,
+                'outstand_amount' => $amount - ($paymentIntent->amount_captured / 100),
+                'status' => $paymentIntent->status,
+            ]);
+        } else {
+            $order->payment()->create([
+                'method' => $paymentMethod,
+                'outstand_amount' => $amount + $dilevryCharge,
+            ]);
+        }
+    }
+
+
+    private function discountCalculator($type, $value, $price): float
+    {
+        switch ($type) {
+            case 'fixed':
+                return $value;
+            case 'percentage':
+                return ($price * $value) / 100;
+            default:
+                return 0;
         }
     }
 
@@ -175,17 +303,5 @@ class OrderController extends Controller
     {
         $newOrder = $order->update($request->validated());
         return $this->updatedResponse($newOrder);
-    }
-
-    private function discountCalculator($type, $value, $price): float
-    {
-        switch ($type) {
-            case 'fixed':
-                return $value;
-            case 'percentage':
-                return ($price * $value) / 100;
-            default:
-                return 0;
-        }
     }
 }

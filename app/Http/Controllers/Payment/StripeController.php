@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Stripe\StripeClient;
 use Stripe\Stripe;
@@ -54,7 +55,7 @@ class StripeController extends Controller
             ]);
 
             return response()->json(['success' => true, 'charge' => $charge]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
