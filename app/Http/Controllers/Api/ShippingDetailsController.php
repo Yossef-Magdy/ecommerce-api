@@ -40,7 +40,7 @@ class ShippingDetailsController extends Controller
      */
     public function show(ShippingDetail $shippingDetail)
     {
-        return response()->json(ShippingDetailResource::make($shippingDetail), 200);
+        return ShippingDetailResource::make($shippingDetail);
     }
 
     /**
