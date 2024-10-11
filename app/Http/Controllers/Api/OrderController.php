@@ -13,9 +13,13 @@ use App\Models\Coupon;
 use App\Models\Products\ProductDetail;
 use Exception;
 
+use Stripe\Stripe;
+use Stripe\Charge;
+
 class OrderController extends Controller
 {
-    function __construct() {
+    function __construct()
+    {
         $this->modelName = "order";
     }
     /**
@@ -36,7 +40,7 @@ class OrderController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
             $coupon = null;
-            
+
             // add coupon usage
             if (isset($data['coupon'])) {
                 // check coupon status
@@ -57,13 +61,13 @@ class OrderController extends Controller
             // update quantities
             foreach ($data['items'] as &$item) {
                 $productDetail = ProductDetail::where('id', $item['product_detail_id'])->first();
-                
+
                 if ($productDetail->stock < $item['quantity']) {
                     return response()->json([
                         'message' => 'Not enough stock for this product'
                     ], 400);
                 }
-                
+
                 $productDetail->update(['stock' => $productDetail->stock - $item['quantity']]);
 
                 $item_discount = $productDetail->product->discount;
@@ -80,6 +84,26 @@ class OrderController extends Controller
                 $item['total_price'] = $productDetail->price * $item['quantity'];
             }
 
+            // Stripe Keys
+            // STRIPE_SECRET_KEY=sk_test_51Q8SaRAYDkqV8OSb7fqS6WHUrsDT2vGmQIG3O4NDUnVuGPFuPNLW2qv3CdcyXRenEguzK4EQHzt9x8mBbUNrB9gc00UHuyenxB
+            // STRIPE_PUBLISHABLE_KEY=pk_test_51Q8SaRAYDkqV8OSb7CBmUOUII185BHQ98c7m36pxUrm8S6KZCbThC7oukcr2ihfQIzpLq1btA19H4Si0EvgFIMqK00Jif1q77f
+            
+            // create stripe charge
+            Stripe::setApiKey(config('stripe.api_key.secret'));
+            $amount = array_sum(array_column($data['items'], 'total_price'));
+            $charge = Charge::create([
+                'amount' => $amount * 100,
+                'currency' => $data['currency'],
+                'source' => $data['stripeToken'],
+                'description' => 'Payment for order',
+                'receipt_email' => Auth::user()->email,
+            ]);
+
+            // Check if charge is successful
+            if ($charge->status !== 'succeeded') {
+                throw new Exception('Payment failed');
+            }
+
             // create order
             $newOrder = Order::create($data);
 
@@ -91,18 +115,30 @@ class OrderController extends Controller
 
             // create order items
             $newOrder->shipping()->create(['shipping_detail_id' => $data['shipping_detail_id']]);
-            $newOrder->payment()->create(['method' => $data['payment_method']]);
+            $newOrder->payment()->create([
+                'method' => $data['payment_method'],
+                'paid_amount' => $charge->amount_captured / 100,
+                'outstand_amount' => $amount - ($charge->amount_captured / 100),
+                'status' => $charge->status
+            ]);
 
             $newOrder->orderItems()->createMany($data['items']);
 
             // save order
             DB::commit();
 
-            return $this->createdResponse(OrderResource::make($newOrder));
+            return response()->json([
+                'message' => 'Order created successfully',
+                'data' => OrderResource::make($newOrder),
+                'charge' => $charge,
+                'success' => true
+            ]);
+            // return $this->createdResponse(OrderResource::make($newOrder));
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
-                'message' => $error->getMessage()
+                'message' => $error->getMessage(),
+                'success' => false
             ], 400);
         }
     }
