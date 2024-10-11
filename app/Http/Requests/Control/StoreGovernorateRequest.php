@@ -22,7 +22,8 @@ class StoreGovernorateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'unique:governorates,name']
+            'name' => ['required', 'string', 'unique:governorates,name'],
+            'fee' => ['required', 'numeric']
         ];
     }
 }

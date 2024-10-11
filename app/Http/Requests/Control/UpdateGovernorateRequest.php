@@ -22,7 +22,8 @@ class UpdateGovernorateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string', 'unique:governorates,name']
+            'name' => ['string', 'unique:governorates,name,'.$this->id.',id'],
+            'fee' => ['numeric']
         ];
     }
 }
