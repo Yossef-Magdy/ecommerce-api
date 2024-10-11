@@ -29,6 +29,8 @@ class StoreOrderRequest extends FormRequest
             'items.*.product_detail_id' => ['required', 'exists:product_details,id'],
             'items.*.quantity' => ['required', 'numeric'],
             'coupon' => ['nullable', 'exists:coupons,coupon_code'],
+            'stripeToken' => ['required', 'string'],
+            'currency' => ['required', 'string', 'in:usd,eur,egp'],
         ];
     }
 
@@ -51,6 +53,9 @@ class StoreOrderRequest extends FormRequest
             'items.quantity.required' => 'Quantity is required',
             'items.quantity.numeric' => 'Quantity must be a number',
             'coupon.exists' => 'Coupon not found',
+            'stripeToken.required' => 'Stripe token is required',
+            'currency.required' => 'Currency is required',
+            'currency.in' => 'Currency must be usd,eur,egp',
         ];
     }
 }

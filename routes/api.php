@@ -28,6 +28,8 @@ use App\Http\Controllers\Control\AnalyticsController;
 use App\Http\Controllers\Control\PermissionController;
 use App\Http\Controllers\Control\RoleController;
 
+use App\Http\Controllers\Payment\StripeController;
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
@@ -66,4 +68,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/shipping-details', ShippingDetailsController::class);
     Route::apiResource('/orders', OrderController::class)->only(['index', 'store','show', 'update']);
+
+    Route::post('/charge', [StripeController::class, 'charge']);
 });
