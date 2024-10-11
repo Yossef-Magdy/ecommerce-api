@@ -16,9 +16,9 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
-        if ($user->tokens()->exists()) {
-            $user->tokens()->delete();
-        }
+        // if ($user->tokens()->exists()) {
+        //     $user->tokens()->delete();
+        // }
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }   
@@ -35,7 +35,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logout successful']);
     }
     function me(Request $request) {
-        $user = $request->user()->load('roles.permissions');
+        $user = $request->user();
         return [
             'id' => $user->id,
             'first_name' => $user->first_name,
