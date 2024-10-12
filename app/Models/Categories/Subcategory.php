@@ -14,6 +14,8 @@ class Subcategory extends Model
 
     protected $fillable = ['name', 'category_id'];
 
+    protected $hidden = ['pivot'];
+
     public function products()
     {
         return $this->belongsToMany(Product::class, 'product_subcategory');
