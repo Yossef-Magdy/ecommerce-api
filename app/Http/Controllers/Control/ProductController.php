@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreProductRequest;
 use App\Http\Requests\Control\UpdateProductRequest;
+use App\Http\Resources\ControlProductResource;
 use App\Models\Products\Product;
 use App\Models\Products\ProductImage;
 use Exception;
@@ -17,6 +18,15 @@ class ProductController extends Controller
     function __construct() {
         $this->authorizeResource(Product::class, 'product');
     }
+
+    public function index() {
+        return ControlProductResource::collection(Product::with(['discount', 'categories:id,name', 'details:product_id,stock'])->paginate(10));
+    }
+
+    public function show(Product $product) {
+        return ControlProductResource::make($product);
+    }
+
     public function store(StoreProductRequest $request)
     {
         DB::beginTransaction();

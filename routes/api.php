@@ -49,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('control')->group(function () {
         Route::apiResource('/users', UserController::class);
-        Route::apiResource('/products', ControlProductController::class)->except(['index', 'show']);
+        Route::apiResource('/products', ControlProductController::class);
         Route::apiResource('/product-details', ControlProductDetailController::class)->except(['index', 'show']);
         Route::apiResource('/discounts', ProductDiscountController::class);
         Route::apiResource('/categories', ControlCategoryController::class)->except(['index', 'show']);
