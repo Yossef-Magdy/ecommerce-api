@@ -22,7 +22,6 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'token' => ['required', 'unique:orders,token'],
             'shipping_detail_id' => ['required', 'exists:shipping_details,id'],
             'payment_method' => ['required'],
             'items' => ['required', 'array'],

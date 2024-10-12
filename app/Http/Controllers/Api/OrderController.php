@@ -51,27 +51,27 @@ class OrderController extends Controller
             $amount = array_sum(array_column($data['items'], 'total_price'));
 
             // Create Stripe charge if payment method is Stripe Method 1
-            $charge = null;
-            if ($data['payment_method'] === 'stripe') {
-                $charge = $this->createStripeCharge($data, $newOrder->id, $amount);
-                if ($charge->status !== 'succeeded') {
-                    throw new Exception('Payment failed');
-                }
-            }
+            // $charge = null;
+            // if ($data['payment_method'] === 'stripe') {
+            //     $charge = $this->createStripeCharge($data, $newOrder->id, $amount);
+            //     if ($charge->status !== 'succeeded') {
+            //         throw new Exception('Payment failed');
+            //     }
+            // }
 
             // Make payment intent if payment method is Stripe Method 2
             $paymentIntent = null;
-            // if ($data['payment_method'] === 'stripe') {
-            //     $paymentIntent = $this->createPaymentIntent($data, $newOrder->id, $amount);
+            if ($data['payment_method'] === 'stripe') {
+                $paymentIntent = $this->createPaymentIntent($data, $newOrder->id, $amount);
 
-            //     if ($paymentIntent->status === 'requires_payment_method') {
-            //         throw new Exception('Payment requires additional payment method.');
-            //     }
+                if ($paymentIntent->status === 'requires_payment_method') {
+                    throw new Exception('Payment requires additional payment method.');
+                }
 
-            //     if ($paymentIntent->status !== 'succeeded') {
-            //         throw new Exception('Payment failed: ' . $paymentIntent);
-            //     }
-            // }
+                if ($paymentIntent->status !== 'succeeded') {
+                    throw new Exception('Payment failed: ' . $paymentIntent);
+                }
+            }
 
 
             // Add coupon usage
@@ -87,10 +87,10 @@ class OrderController extends Controller
             // Create payment record
 
             // Method 1
-            $this->createPaymentRecord($newOrder, $data['payment_method'], $amount, $charge ?? null, $dilevryCharge);
+            // $this->createPaymentRecord($newOrder, $data['payment_method'], $amount, $charge ?? null, $dilevryCharge);
             
             // Method 2
-            // $this->createPaymentIntentRecord($newOrder, $data['payment_method'], $amount, $paymentIntent ?? null, $dilevryCharge);
+            $this->createPaymentIntentRecord($newOrder, $data['payment_method'], $amount, $paymentIntent ?? null, $dilevryCharge);
             
             DB::commit();
 
@@ -100,10 +100,10 @@ class OrderController extends Controller
                 'success' => true,
 
                 // Method 1
-                'charge' => $charge ?? null,
+                // 'charge' => $charge ?? null,
 
                 // Method 2
-                // 'paymentIntent' => $paymentIntent ?? null,
+                'paymentIntent' => $paymentIntent ?? null,
                 
             ]);
         } catch (Exception $error) {
@@ -163,9 +163,10 @@ class OrderController extends Controller
         Stripe::setApiKey(config('stripe.api_key.secret'));
 
         $shippingDetail = ShippingDetail::findOrFail($data['shipping_detail_id']);
+        $amountInCents = $amount * 100;
 
         return Charge::create([
-            'amount' => $amount * 100,
+            'amount' => $amountInCents, // 1 Dollar = 100 Cents
             'currency' => $data['currency'],
             'description' => 'Payment for order #' . $orderId,
             'statement_descriptor' => 'ELEGANT wear',
@@ -212,9 +213,10 @@ class OrderController extends Controller
         Stripe::setApiKey(config('stripe.api_key.secret'));
 
         $shippingDetail = ShippingDetail::findOrFail($data['shipping_detail_id']);
+        $amountInCents = $amount * 100;
 
         $paymentIntent = PaymentIntent::create([
-            'amount' => $amount * 100,
+            'amount' => $amountInCents, // 1 Dollar = 100 Cents
             'currency' => $data['currency'],
             'description' => 'Payment for order #' . $orderId,
             'receipt_email' => Auth::user()->email,
@@ -252,7 +254,6 @@ class OrderController extends Controller
         return $paymentIntent;
     }
 
-
     private function createPaymentIntentRecord($order, $paymentMethod, $amount, $paymentIntent, $dilevryCharge)
     {
         if ($paymentMethod === 'stripe' && $paymentIntent) {
@@ -269,7 +270,6 @@ class OrderController extends Controller
             ]);
         }
     }
-
 
     private function discountCalculator($type, $value, $price): float
     {
