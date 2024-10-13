@@ -42,36 +42,36 @@ class OrderController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
             $coupon = $this->validateCoupon($data['coupon'] ?? null);
-            $dilevryCharge = 10;
+            $dilevryCharge = ShippingDetail::findOrFail($data['shipping_detail_id'])?->governorate?->fee ?? 50;
 
             $this->updateProductQuantities($data['items'], $coupon);
 
             // Create order
             $newOrder = Order::create($data);
-            $amount = array_sum(array_column($data['items'], 'total_price'));
+            $amount = array_sum(array_column($data['items'], 'total_price')) + $dilevryCharge;
 
             // Create Stripe charge if payment method is Stripe Method 1
-            // $charge = null;
-            // if ($data['payment_method'] === 'stripe') {
-            //     $charge = $this->createStripeCharge($data, $newOrder->id, $amount);
-            //     if ($charge->status !== 'succeeded') {
-            //         throw new Exception('Payment failed');
-            //     }
-            // }
-
-            // Make payment intent if payment method is Stripe Method 2
-            $paymentIntent = null;
+            $charge = null;
             if ($data['payment_method'] === 'stripe') {
-                $paymentIntent = $this->createPaymentIntent($data, $newOrder->id, $amount);
-
-                if ($paymentIntent->status === 'requires_payment_method') {
-                    throw new Exception('Payment requires additional payment method.');
-                }
-
-                if ($paymentIntent->status !== 'succeeded') {
-                    throw new Exception('Payment failed: ' . $paymentIntent);
+                $charge = $this->createStripeCharge($data, $newOrder->id, $amount);
+                if ($charge->status !== 'succeeded') {
+                    throw new Exception('Payment failed');
                 }
             }
+
+            // Make payment intent if payment method is Stripe Method 2
+            // $paymentIntent = null;
+            // if ($data['payment_method'] === 'stripe') {
+            //     $paymentIntent = $this->createPaymentIntent($data, $newOrder->id, $amount);
+
+            //     if ($paymentIntent->status === 'requires_payment_method') {
+            //         throw new Exception('Payment requires additional payment method.');
+            //     }
+
+            //     if ($paymentIntent->status !== 'succeeded') {
+            //         throw new Exception('Payment failed: ' . $paymentIntent);
+            //     }
+            // }
 
 
             // Add coupon usage
@@ -87,10 +87,10 @@ class OrderController extends Controller
             // Create payment record
 
             // Method 1
-            // $this->createPaymentRecord($newOrder, $data['payment_method'], $amount, $charge ?? null, $dilevryCharge);
+            $this->createPaymentRecord($newOrder, $data['payment_method'], $amount, $charge ?? null);
             
             // Method 2
-            $this->createPaymentIntentRecord($newOrder, $data['payment_method'], $amount, $paymentIntent ?? null, $dilevryCharge);
+            // $this->createPaymentIntentRecord($newOrder, $data['payment_method'], $amount, $paymentIntent ?? null);
             
             DB::commit();
 
@@ -100,10 +100,10 @@ class OrderController extends Controller
                 'success' => true,
 
                 // Method 1
-                // 'charge' => $charge ?? null,
+                'charge' => $charge ?? null,
 
                 // Method 2
-                'paymentIntent' => $paymentIntent ?? null,
+                // 'paymentIntent' => $paymentIntent ?? null,
                 
             ]);
         } catch (Exception $error) {
@@ -191,7 +191,7 @@ class OrderController extends Controller
         ]);
     }
 
-    private function createPaymentRecord($order, $paymentMethod, $amount, $charge, $dilevryCharge)
+    private function createPaymentRecord($order, $paymentMethod, $amount, $charge)
     {
         if ($paymentMethod === 'stripe' && $charge) {
             $order->payment()->create([
@@ -203,7 +203,7 @@ class OrderController extends Controller
         } else {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'outstand_amount' => $amount + $dilevryCharge, // add delivery charge
+                'outstand_amount' => $amount, // add delivery charge
             ]);
         }
     }
@@ -254,19 +254,19 @@ class OrderController extends Controller
         return $paymentIntent;
     }
 
-    private function createPaymentIntentRecord($order, $paymentMethod, $amount, $paymentIntent, $dilevryCharge)
+    private function createPaymentIntentRecord($order, $paymentMethod, $amount, $paymentIntent)
     {
         if ($paymentMethod === 'stripe' && $paymentIntent) {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'paid_amount' => $paymentIntent->amount_captured / 100,
-                'outstand_amount' => $amount - ($paymentIntent->amount_captured / 100),
+                'paid_amount' => $paymentIntent->amount_received / 100,
+                'outstand_amount' => $amount - ($paymentIntent->amount_received / 100),
                 'status' => $paymentIntent->status,
             ]);
         } else {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'outstand_amount' => $amount + $dilevryCharge,
+                'outstand_amount' => $amount,
             ]);
         }
     }
