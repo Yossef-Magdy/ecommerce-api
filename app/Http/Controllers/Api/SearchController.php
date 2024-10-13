@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Models\Products\Product;
 use Illuminate\Http\Request;
 
@@ -44,6 +45,6 @@ class SearchController extends Controller
                 break;
         }
 
-        return $products;
+        return ProductResource::collection($products);
     }
 }
