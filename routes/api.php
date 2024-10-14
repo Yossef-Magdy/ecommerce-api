@@ -32,6 +32,8 @@ use App\Http\Middleware\ConvertToIntegerArray;
 use App\Http\Controllers\Payment\StripeController;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/callback/google', [AuthController::class, 'google']);
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
 
