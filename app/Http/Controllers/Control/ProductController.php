@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     function __construct() {
+        $this->modelName = "product";
         $this->authorizeResource(Product::class, 'product');
     }
 
@@ -52,19 +53,13 @@ class ProductController extends Controller
             ], 500);
         }
 
-        return response()->json([
-            'message' => 'Product created successfully',
-            'data' => $product,
-        ], 201);
+        return $this->createdResponse();
     }
 
-    public function update(UpdateProductRequest $request, $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         DB::beginTransaction();
         try {
-            $product = Product::findOrFail($id);
-            $data = $request->validated();
-
             if ($request->hasFile('cover_image')) {
                 Storage::delete($product->cover_image);
                 $product->cover_image = $request->file('cover_image')->store('', 'product_cover');
@@ -86,17 +81,13 @@ class ProductController extends Controller
             }
 
             DB::commit();
-
-            return response()->json([
-                'message' => 'Product updated successfully',
-                'data' => $product,
-            ]);
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
                 'message' => $error->getMessage()
             ], 500);
         }
+        return $this->updatedResponse(ControlProductResource::make($product));
     }
 
     public function destroy(Product $product)

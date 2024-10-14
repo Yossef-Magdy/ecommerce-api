@@ -69,7 +69,7 @@ class UserController extends Controller
         if (isset($permissions)) {
             $user->permissions()->sync($permissions);
         }
-        return $this->updatedResponse();
+        return $this->updatedResponse(UserResource::make($user));
     }
 
     /**

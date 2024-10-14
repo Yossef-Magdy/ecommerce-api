@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories\Category;
 use App\Http\Requests\Control\StoreCategoryRequest;
 use App\Http\Requests\Control\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
 {
@@ -30,7 +31,7 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
-        return $this->updatedResponse();
+        return $this->updatedResponse(CategoryResource::make($category));
     }
 
     /**

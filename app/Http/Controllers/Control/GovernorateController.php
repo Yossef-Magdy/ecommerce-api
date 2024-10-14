@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreGovernorateRequest;
 use App\Http\Requests\Control\UpdateGovernorateRequest;
+use App\Http\Resources\GovernorateResource;
 use App\Models\Governorate;
 
 class GovernorateController extends Controller
@@ -29,7 +30,7 @@ class GovernorateController extends Controller
     public function update(UpdateGovernorateRequest $request, Governorate $governorate)
     {
         $governorate->update($request->validated());
-        return $this->updatedResponse();
+        return $this->updatedResponse(GovernorateResource::make($governorate));
     }
 
     /**

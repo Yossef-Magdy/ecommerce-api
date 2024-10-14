@@ -29,7 +29,7 @@ class UpdateProductRequest extends FormRequest
             'name' => ['string'],
             'description' => ['string'],
             'price' => ['numeric'],
-            'cover_image' => ['image', 'mimes:jpg,png'],
+            'cover_image' => ['image', 'mimes:jpg,png,webp', 'max:5120'],
             'product_images' => ['array'],
             'product_images.*' => ['image'],
             'categories' => ['array'],

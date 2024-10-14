@@ -30,7 +30,7 @@ class CouponController extends Controller
     public function update(UpdateCouponRequest $request, Coupon $coupon)
     {
         $coupon->update($request->validated());
-        return $this->updatedResponse();
+        return $this->updatedResponse(CouponResource::make($coupon));
     }
 
     public function destroy(Coupon $coupon)

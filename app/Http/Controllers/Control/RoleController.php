@@ -71,7 +71,7 @@ class RoleController extends Controller
                 'message' => $error->getMessage()
             ], 500);
         }
-        return $this->updatedResponse();
+        return $this->updatedResponse(RoleResource::make($role));
     }
 
     /**
