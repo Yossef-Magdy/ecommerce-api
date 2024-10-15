@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\UserCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginGoogleRequest;
 use App\Http\Requests\Auth\LoginRequest;
@@ -25,6 +26,7 @@ class AuthController extends Controller
         // if ($user->tokens()->exists()) {
         //     $user->tokens()->delete();
         // }
+        
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
@@ -52,6 +54,7 @@ class AuthController extends Controller
                     'email' => $email,
                     'password' => bcrypt(Str::random(16)),
                 ]);
+                event(new UserCreated($user));
             }
     
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -87,6 +90,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'User already exists'], 409);
         }
         $user = User::create($request->validated());
+        event(new UserCreated($user));
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
