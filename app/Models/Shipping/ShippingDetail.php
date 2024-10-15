@@ -2,7 +2,7 @@
 
 namespace App\Models\Shipping;
 
-use App\Models\Governorate;
+use App\Models\Core\Governorate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

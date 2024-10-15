@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Categories\Category;
 use App\Models\Categories\Subcategory;
-use App\Models\Governorate;
+use App\Models\Core\Governorate;
 use App\Models\User;
 use App\Models\Roles\Role;
 use App\Models\Roles\UserRole;

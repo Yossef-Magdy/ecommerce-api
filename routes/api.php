@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/orders', ControlOrderController::class)->only(['index', 'show', 'update']);
         Route::apiResource('/governorates', ControlGovernorateController::class)->except(['show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
-        Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'show']);
+        Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'update']);
         Route::apiResource('/roles', RoleController::class);
         Route::apiResource('/permissions', PermissionController::class)->only(['index', 'show']);
     });

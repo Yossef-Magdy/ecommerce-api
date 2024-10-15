@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories\Category;
+use App\Models\Core\Analytics;
 use App\Models\Orders\OrderItem;
+use App\Models\Products\Product;
+use App\Models\Shipping\Shipping;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -12,6 +17,9 @@ class AnalyticsController extends Controller
 {
     public function index(Request $request)
     {
+        return response()->json([
+            'analytics' => Analytics::first(),
+        ]);
         // Get month and year
         $month = $request->get('month', date('m'));
         $year = $request->get('year', date('Y'));
@@ -64,5 +72,35 @@ class AnalyticsController extends Controller
         $totalProductsSold = $productsSold->count();
 
         return response()->json(compact('productsSold', 'totalItemsSold', 'totalProductsSold', 'totalSales'), 200);
+    }
+
+    public function update(Request $request)
+    {
+        $analytics = Analytics::first() ?? new Analytics();
+
+        $analytics->total_products = Product::count();
+        $analytics->total_categories = Category::count();
+        $analytics->total_orders = OrderItem::count();
+        $analytics->total_earning = OrderItem::sum('total_price');
+
+        $analytics->total_refunded = Shipping::where('status', 'Refunded')->with('orderItems')->get()->sum(function ($shipping) {
+            return $shipping->orderItems->sum('total_price');
+        });
+
+        $analytics->total_users = User::count();
+
+        $today = Carbon::today();
+        $month = Carbon::now()->month;
+        $year = Carbon::now()->year;
+
+        $analytics->today_orders = OrderItem::whereDate('created_at', $today)->count();
+        $analytics->month_orders = OrderItem::whereMonth('created_at', $month)->count();
+        $analytics->year_orders = OrderItem::whereYear('created_at', $year)->count();
+
+        $analytics->save();
+
+        return response()->json([
+            'analytics' => $analytics,
+        ]);
     }
 }
