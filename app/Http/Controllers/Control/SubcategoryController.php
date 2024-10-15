@@ -16,6 +16,10 @@ class SubcategoryController extends Controller
         $this->authorizeResource(Subcategory::class, 'subcategory');
     }
 
+    public function index() {
+        return SubcategoryResource::collection(Subcategory::paginate(10));
+    }
+
     /**
      * Store a newly created resource in storage.
      */

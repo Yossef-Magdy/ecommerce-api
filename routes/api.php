@@ -55,11 +55,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/products', ControlProductController::class)->middleware(ConvertToIntegerArray::class);
         Route::apiResource('/product-details', ControlProductDetailController::class)->except(['index', 'show']);
         Route::apiResource('/discounts', ProductDiscountController::class);
-        Route::apiResource('/categories', ControlCategoryController::class)->except(['index', 'show']);
+        Route::apiResource('/categories', ControlCategoryController::class)->except(['show']);
         Route::apiResource('/coupons', ControlCouponController::class)->except(['show']);
-        Route::apiResource('/subcategories', ControlSubcategoryController::class)->except(['index', 'show']);
+        Route::apiResource('/subcategories', ControlSubcategoryController::class)->except(['show']);
         Route::apiResource('/orders', ControlOrderController::class)->only(['index', 'show', 'update']);
-        Route::apiResource('/governorates', ControlGovernorateController::class)->except(['index', 'show']);
+        Route::apiResource('/governorates', ControlGovernorateController::class)->except(['show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
         Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'show']);
         Route::apiResource('/roles', RoleController::class);

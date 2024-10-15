@@ -7,6 +7,7 @@ use App\Models\Categories\Category;
 use App\Http\Requests\Control\StoreCategoryRequest;
 use App\Http\Requests\Control\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\Control\CategoryResource as ControlCategoryResource;
 
 class CategoryController extends Controller
 {
@@ -14,6 +15,10 @@ class CategoryController extends Controller
     {
         $this->modelName = "category";
         $this->authorizeResource(Category::class, 'category');
+    }
+
+    public function index() {
+        return ControlCategoryResource::collection(Category::with('subcategories')->paginate(10));
     }
 
     /**

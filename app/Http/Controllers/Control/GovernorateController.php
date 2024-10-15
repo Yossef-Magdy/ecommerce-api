@@ -15,6 +15,11 @@ class GovernorateController extends Controller
         $this->modelName = "governorate";
         $this->authorizeResource(Governorate::class, 'governorate');
     }
+
+    public function index() {
+        return GovernorateResource::collection(Governorate::paginate(10));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
