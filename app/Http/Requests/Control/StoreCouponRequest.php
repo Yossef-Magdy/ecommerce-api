@@ -25,8 +25,14 @@ class StoreCouponRequest extends FormRequest
             'coupon_code' => ['required', 'string', 'unique:coupons,coupon_code'],
             'uses_count' => ['integer'],
             'discount_type' => ['in:fixed,percentage'],
-            'discount_value' => ['required', 'numeric'],
-            'expiry_date' => ['date', 'after:now'],
+            'discount_value' => ['required', 'numeric', 
+                function ($attribute, $value, $fail) {
+                    if ($this->discount_type === 'percentage' && $value > 100) {
+                        $fail('The discount value must be less than or equal to 100 when type is percentage.');
+                    }
+                },
+            ],
+            'expiry_date' => ['date'],
         ];
     }
 
@@ -40,7 +46,6 @@ class StoreCouponRequest extends FormRequest
             'discount_value.required' => 'Discount value is required',
             'discount_value.numeric' => 'Discount value must be a number',
             'expiry_date.date' => 'Expiry date must be a date',
-            'expiry_date.after' => 'Expiry date must be after today',
         ];
     }
 }
