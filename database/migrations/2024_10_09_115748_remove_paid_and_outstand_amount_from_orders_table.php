@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->decimal('paid_amount', 10, 2)->default(0);
-            $table->decimal('outstand_amount', 10, 2)->default(0);
+            $table->decimal('outstanding_amount', 10, 2)->default(0);
         });
     }
 };

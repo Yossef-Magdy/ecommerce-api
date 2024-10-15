@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->decimal('paid_amount', 10, 2)->default(0);
-            $table->decimal('outstand_amount', 10, 2)->default(0);
+            $table->decimal('outstanding_amount', 10, 2)->default(0);
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn(['paid_amount', 'outstand_amount']);
+            $table->dropColumn(['paid_amount', 'outstanding_amount']);
         });
     }
 };
