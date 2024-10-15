@@ -31,6 +31,9 @@ class ShippingDetailsController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = Auth::id();
+        if ($data['is_default'] == true) {
+            ShippingDetail::query()->where('user_id', $data['user_id'])->update(['is_default' => false]);
+        }
         $shippingDetail = ShippingDetail::create($data);
         return $this->createdResponse(ShippingDetailResource::make($shippingDetail));
     }
