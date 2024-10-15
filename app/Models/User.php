@@ -41,9 +41,15 @@ class User extends Authenticatable
     
     public function hasPermission(string $permission) 
     {
-        return 
-        $this->permissions()->where('name', $permission)->exists() ||
-        $this->roles()->permissions()->where('name', $permission)->exists();
+        if ($this->permissions()->where('name', $permission)->exists()) {
+            return true;
+        }
+        foreach ($this->roles as $role) {
+            if ($role->permissions()->where('name', $permission)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function orders(): HasMany
