@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Control;
 
+use App\Events\ProductCreated;
+use App\Events\ProductDeleted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreProductRequest;
 use App\Http\Requests\Control\UpdateProductRequest;
@@ -46,6 +48,7 @@ class ProductController extends Controller
             $product->subcategories()->attach($request['subcategories']);
 
             DB::commit();
+            event(new ProductCreated($product));
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
@@ -104,6 +107,7 @@ class ProductController extends Controller
             }
             $product->delete();
             DB::commit();
+            event(new ProductDeleted($product));
         } catch (Exception $errors) {
             DB::rollBack();
             return response()->json([
