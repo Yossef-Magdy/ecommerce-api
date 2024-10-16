@@ -18,11 +18,10 @@ class AnalyticsController extends Controller
 {
     public function index(Request $request)
     {
-        $analytics = Analytics::first();
+        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+
         if (!$analytics) {
-            return response()->json([
-                'error' => 'No analytics data found',
-            ], 404);
+            $analytics = Analytics::create(['created_at' => now()]);
         }
 
         return response()->json([
@@ -41,7 +40,11 @@ class AnalyticsController extends Controller
 
     public function update(Request $request)
     {
-        $analytics = Analytics::first() ?? new Analytics();
+        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+
+        if (!$analytics) {
+            $analytics = Analytics::create(['created_at' => now()]);
+        }
 
         $analytics->total_products = Product::count();
         $analytics->total_categories = Category::count();

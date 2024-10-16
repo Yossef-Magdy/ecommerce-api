@@ -17,7 +17,11 @@ class UserObserver
 
     protected function updateAnalyticsOnUserCreated(): void
     {
-        $analytics = Analytics::first() ?? new Analytics();
+        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+
+        if (!$analytics) {
+            $analytics = Analytics::create(['created_at' => now()]);
+        }
         $analytics->total_users++;
         $analytics->updateLastUpdate();
     }

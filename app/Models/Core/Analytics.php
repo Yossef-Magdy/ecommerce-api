@@ -25,27 +25,27 @@ class Analytics extends Model
 
     public function isUpdatedToday(): bool
     {
-        return $this->updated_at->isToday();
+        return $this->updated_at ? $this->updated_at->isToday() : false;
     }
 
     public function isUpdatedYesterday(): bool
     {
-        return $this->updated_at->isYesterday();
+        return $this->updated_at ? $this->updated_at->isYesterday() : false;
     }
 
     public function isUpdatedLastWeek(): bool
     {
-        return $this->updated_at->isLastWeek();
+        return $this->updated_at ? $this->updated_at->isLastWeek() : false;
     }
 
     public function isUpdatedLastMonth(): bool
     {
-        return $this->updated_at->isLastMonth();
+        return $this->updated_at ? $this->updated_at->isLastMonth() : false;
     }
 
     public function isUpdatedLastYear(): bool
     {
-        return $this->updated_at->isLastYear();
+        return $this->updated_at ? $this->updated_at->isLastYear() : false;
     }
 
     public function updateLastUpdate()
