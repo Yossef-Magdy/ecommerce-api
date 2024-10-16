@@ -26,17 +26,17 @@ class AnalyticsController extends Controller
         }
 
         return response()->json([
-                "total_products" => $analytics->total_products,
-                "total_categories" => $analytics->total_categories,
-                "total_orders" => $analytics->total_orders,
-                "total_earning" => number_format($analytics->total_earning, 2),
-                "total_refunded" => number_format($analytics->total_refunded, 2),
-                "total_users" => $analytics->total_users,
-                "today_orders" => $analytics->today_orders,
-                "month_orders" => $analytics->month_orders,
-                "year_orders" => $analytics->year_orders,
-                "last_update" => $analytics->updated_at->diffForHumans(),
-            ]);
+            "total_products" => $analytics->total_products,
+            "total_categories" => $analytics->total_categories,
+            "total_orders" => $analytics->total_orders,
+            "total_earning" => number_format($analytics->total_earning, 2),
+            "total_refunded" => number_format($analytics->total_refunded, 2),
+            "total_users" => $analytics->total_users,
+            "today_orders" => $analytics->today_orders,
+            "month_orders" => $analytics->month_orders,
+            "year_orders" => $analytics->year_orders,
+            "last_update" => $analytics->updated_at->diffForHumans(),
+        ]);
     }
 
     public function update(Request $request)
@@ -46,9 +46,15 @@ class AnalyticsController extends Controller
         $analytics->total_products = Product::count();
         $analytics->total_categories = Category::count();
         $analytics->total_orders = Order::count();
-        $analytics->total_earning = OrderItem::sum('total_price');
 
         $analytics->total_refunded = Shipping::where('status', 'canceled')
+            ->with('order')
+            ->get()
+            ->sum(function ($shipping) {
+                return $shipping->order->orderItems->sum('total_price');
+            });
+
+        $analytics->total_earning = Shipping::where('status', '!=', 'canceled')
             ->with('order')
             ->get()
             ->sum(function ($shipping) {
