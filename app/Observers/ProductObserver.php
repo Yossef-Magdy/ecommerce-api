@@ -13,7 +13,11 @@ class ProductObserver implements ShouldHandleEventsAfterCommit
      */
     public function created(Product $product): void
     {
-        $analytics = Analytics::first() ?? new Analytics();
+        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+
+        if (!$analytics) {
+            $analytics = Analytics::create(['created_at' => now()]);
+        }
         $analytics->total_products++;
         $analytics->updateLastUpdate();
     }
@@ -23,7 +27,11 @@ class ProductObserver implements ShouldHandleEventsAfterCommit
      */
     public function deleted(Product $product): void
     {
-        $analytics = Analytics::first() ?? new Analytics();
+        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+
+        if (!$analytics) {
+            $analytics = Analytics::create(['created_at' => now()]);
+        }
         $analytics->total_products--;
         $analytics->updateLastUpdate();
     }

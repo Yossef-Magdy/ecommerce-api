@@ -20,10 +20,15 @@ class OrderObserver implements ShouldHandleEventsAfterCommit
     
     private function updateAnalyticsOnOrderCreated($order)
     {
-        $analytics = Analytics::first() ?? new Analytics();
+        // Get analytics for today
+        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+
+        if (!$analytics) {
+            $analytics = Analytics::create(['created_at' => now()]);
+        }
 
         $analytics->total_orders++;
-        $analytics->total_earning += $order->payment->amount;
+        $analytics->total_earning += $order->payment->paid_amount;
 
         if ($analytics->isUpdatedToday()) {
             $analytics->today_orders++;
