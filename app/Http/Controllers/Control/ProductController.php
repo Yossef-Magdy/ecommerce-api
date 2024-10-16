@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreProductRequest;
 use App\Http\Requests\Control\UpdateProductRequest;
 use App\Http\Resources\Control\ProductResource;
+use App\Http\Resources\Control\ProductDetailsResource;
 use App\Models\Products\Product;
 use App\Models\Products\ProductImage;
 use Exception;
@@ -25,7 +26,7 @@ class ProductController extends Controller
     }
 
     public function show(Product $product) {
-        return ProductResource::make($product);
+        return ProductDetailsResource::make($product);
     }
 
     public function store(StoreProductRequest $request)

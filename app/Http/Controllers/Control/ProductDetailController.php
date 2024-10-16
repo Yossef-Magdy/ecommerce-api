@@ -29,9 +29,8 @@ class ProductDetailController extends Controller
      */
     public function update(UpdateProductDetailRequest $request, ProductDetail $productDetail)
     {
-        $data = $request->validated();
-        $productNewDetail = $productDetail->update($data);
-        return $this->updatedResponse($productNewDetail);
+        $productDetail->update($request->validated());
+        return $this->updatedResponse($productDetail);
     }
 
     /**
