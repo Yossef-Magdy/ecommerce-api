@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Coupon;
+use App\Models\Core\Coupon;
 use App\Models\User;
 
 class CouponPolicy

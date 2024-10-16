@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Governorate;
+use App\Models\Core\Governorate;
 use App\Models\User;
 
 class GovernoratePolicy

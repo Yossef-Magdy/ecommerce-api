@@ -3,7 +3,13 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories\Category;
+use App\Models\Core\Analytics;
+use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Models\Products\Product;
+use App\Models\Shipping\Shipping;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +17,71 @@ use Illuminate\Support\Facades\Cache;
 class AnalyticsController extends Controller
 {
     public function index(Request $request)
+    {
+        $analytics = Analytics::first();
+        if (!$analytics) {
+            return response()->json([
+                'error' => 'No analytics data found',
+            ], 404);
+        }
+
+        return response()->json([
+                "total_products" => $analytics->total_products,
+                "total_categories" => $analytics->total_categories,
+                "total_orders" => $analytics->total_orders,
+                "total_earning" => number_format($analytics->total_earning, 2),
+                "total_refunded" => number_format($analytics->total_refunded, 2),
+                "total_users" => $analytics->total_users,
+                "today_orders" => $analytics->today_orders,
+                "month_orders" => $analytics->month_orders,
+                "year_orders" => $analytics->year_orders,
+                "last_update" => $analytics->updated_at->diffForHumans(),
+            ]);
+    }
+
+    public function update(Request $request)
+    {
+        $analytics = Analytics::first() ?? new Analytics();
+
+        $analytics->total_products = Product::count();
+        $analytics->total_categories = Category::count();
+        $analytics->total_orders = Order::count();
+        $analytics->total_earning = OrderItem::sum('total_price');
+
+        $analytics->total_refunded = Shipping::where('status', 'canceled')
+            ->with('order')
+            ->get()
+            ->sum(function ($shipping) {
+                return $shipping->order->orderItems->sum('total_price');
+            });
+
+        $analytics->total_users = User::count();
+
+        $today = Carbon::today();
+        $month = Carbon::now()->month;
+        $year = Carbon::now()->year;
+
+        $analytics->today_orders = OrderItem::whereDate('created_at', $today)->count();
+        $analytics->month_orders = OrderItem::whereMonth('created_at', $month)->count();
+        $analytics->year_orders = OrderItem::whereYear('created_at', $year)->count();
+
+        $analytics->save();
+
+        return response()->json([
+            "total_products" => $analytics->total_products,
+            "total_categories" => $analytics->total_categories,
+            "total_orders" => $analytics->total_orders,
+            "total_earning" => number_format($analytics->total_earning, 2),
+            "total_refunded" => number_format($analytics->total_refunded, 2),
+            "total_users" => $analytics->total_users,
+            "today_orders" => $analytics->today_orders,
+            "month_orders" => $analytics->month_orders,
+            "year_orders" => $analytics->year_orders,
+            "last_update" => $analytics->updated_at->diffForHumans(),
+        ]);
+    }
+
+    public function show(Request $request)
     {
         // Get month and year
         $month = $request->get('month', date('m'));

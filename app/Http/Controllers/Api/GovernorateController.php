@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GovernorateResource;
-use App\Models\Governorate;
+use App\Models\Core\Governorate;
 
 class GovernorateController extends Controller
 {

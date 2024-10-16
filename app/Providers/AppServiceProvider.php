@@ -2,11 +2,21 @@
 
 namespace App\Providers;
 
+use App\Events\OrderCreated;
+use App\Events\OrderRefunded;
+use App\Events\ProductCreated;
+use App\Events\ProductDeleted;
+use App\Events\UserCreated;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\OrderObserver;
 use App\Models\Orders\Order;
+use App\Models\Products\Product;
+use App\Models\Shipping\Shipping;
+use App\Observers\ProductObserver;
+use App\Observers\ShippingObserver;
+use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,5 +43,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Order::observe(OrderObserver::class);
+        User::observe(UserObserver::class);
+        Product::observe(ProductObserver::class);
+        Shipping::observe(ShippingObserver::class);
     }
 }

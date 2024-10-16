@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\OrderCreated;
+use App\Events\OrderRefunded;
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
 use Illuminate\Support\Facades\Auth;
@@ -9,11 +11,11 @@ use App\Http\Requests\Api\StoreOrderRequest;
 use App\Http\Requests\Api\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\DB;
-use App\Models\Coupon;
+use App\Models\Core\Coupon;
 use App\Models\Products\ProductDetail;
 use App\Models\Shipping\ShippingDetail;
 use Exception;
-
+use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\PaymentIntent;
@@ -88,12 +90,11 @@ class OrderController extends Controller
 
             // Method 1
             $this->createPaymentRecord($newOrder, $data['payment_method'], $amount, $charge ?? null);
-            
+
             // Method 2
             // $this->createPaymentIntentRecord($newOrder, $data['payment_method'], $amount, $paymentIntent ?? null);
-            
-            DB::commit();
 
+            DB::commit();
             return response()->json([
                 'message' => 'Order created successfully',
                 'data' => OrderResource::make($newOrder),
@@ -104,7 +105,7 @@ class OrderController extends Controller
 
                 // Method 2
                 // 'paymentIntent' => $paymentIntent ?? null,
-                
+
             ]);
         } catch (Exception $error) {
             DB::rollBack();
@@ -197,13 +198,13 @@ class OrderController extends Controller
             $order->payment()->create([
                 'method' => $paymentMethod,
                 'paid_amount' => $charge->amount_captured / 100,
-                'outstanding_amount' => $amount - ($charge->amount_captured / 100),
+                'outstand_amount' => $amount - ($charge->amount_captured / 100),
                 'status' => $charge->status
             ]);
         } else {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'outstanding_amount' => $amount, // add delivery charge
+                'outstand_amount' => $amount, // add delivery charge
             ]);
         }
     }
@@ -260,13 +261,13 @@ class OrderController extends Controller
             $order->payment()->create([
                 'method' => $paymentMethod,
                 'paid_amount' => $paymentIntent->amount_received / 100,
-                'outstanding_amount' => $amount - ($paymentIntent->amount_received / 100),
+                'outstand_amount' => $amount - ($paymentIntent->amount_received / 100),
                 'status' => $paymentIntent->status,
             ]);
         } else {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'outstanding_amount' => $amount,
+                'outstand_amount' => $amount,
             ]);
         }
     }
@@ -301,7 +302,34 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        $newOrder = $order->update($request->validated());
-        return $this->updatedResponse($newOrder);
+        // Check if order user is same as authenticated user
+        if ($order->user_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Forbidden'
+            ], 403);
+        }
+
+        // Check if order is already canceled
+        if ($order->shipping['status'] === 'canceled') {
+            return response()->json([
+                'message' => 'Shipping status is already canceled'
+            ], 403);
+        }
+
+        DB::beginTransaction();
+        try {
+            $order->shipping->update(['status' => 'canceled']);
+            $order->save();
+
+            DB::commit();
+            return response()->json([
+                'message' => 'Order canceled successfully',
+            ]);
+        } catch (Exception $error) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $error->getMessage(),
+            ], 400);
+        }
     }
 }

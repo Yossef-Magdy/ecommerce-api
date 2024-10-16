@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreGovernorateRequest;
 use App\Http\Requests\Control\UpdateGovernorateRequest;
 use App\Http\Resources\GovernorateResource;
-use App\Models\Governorate;
+use App\Models\Core\Governorate;
 
 class GovernorateController extends Controller
 {

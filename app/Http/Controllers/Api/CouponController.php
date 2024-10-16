@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CouponResource;
-use App\Models\Coupon;
+use App\Models\Core\Coupon;
 
 class CouponController extends Controller
 {

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Control;
 
+use App\Events\ProductCreated;
+use App\Events\ProductDeleted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreProductRequest;
 use App\Http\Requests\Control\UpdateProductRequest;
