@@ -198,13 +198,13 @@ class OrderController extends Controller
             $order->payment()->create([
                 'method' => $paymentMethod,
                 'paid_amount' => $charge->amount_captured / 100,
-                'outstand_amount' => $amount - ($charge->amount_captured / 100),
+                'outstanding_amount' => $amount - ($charge->amount_captured / 100),
                 'status' => $charge->status
             ]);
         } else {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'outstand_amount' => $amount, // add delivery charge
+                'outstanding_amount' => $amount, // add delivery charge
             ]);
         }
     }
@@ -261,13 +261,13 @@ class OrderController extends Controller
             $order->payment()->create([
                 'method' => $paymentMethod,
                 'paid_amount' => $paymentIntent->amount_received / 100,
-                'outstand_amount' => $amount - ($paymentIntent->amount_received / 100),
+                'outstanding_amount' => $amount - ($paymentIntent->amount_received / 100),
                 'status' => $paymentIntent->status,
             ]);
         } else {
             $order->payment()->create([
                 'method' => $paymentMethod,
-                'outstand_amount' => $amount,
+                'outstanding_amount' => $amount,
             ]);
         }
     }
