@@ -18,7 +18,25 @@ class AnalyticsController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(['data' => Analytics::first()]);
+        $analytics = Analytics::first();
+        if (!$analytics) {
+            return response()->json([
+                'error' => 'No analytics data found',
+            ], 404);
+        }
+
+        return response()->json([
+                "total_products" => $analytics->total_products,
+                "total_categories" => $analytics->total_categories,
+                "total_orders" => $analytics->total_orders,
+                "total_earning" => number_format($analytics->total_earning, 2),
+                "total_refunded" => number_format($analytics->total_refunded, 2),
+                "total_users" => $analytics->total_users,
+                "today_orders" => $analytics->today_orders,
+                "month_orders" => $analytics->month_orders,
+                "year_orders" => $analytics->year_orders,
+                "last_update" => $analytics->updated_at->diffForHumans(),
+            ]);
     }
 
     public function update(Request $request)
@@ -50,7 +68,16 @@ class AnalyticsController extends Controller
         $analytics->save();
 
         return response()->json([
-            'data' => $analytics,
+            "total_products" => $analytics->total_products,
+            "total_categories" => $analytics->total_categories,
+            "total_orders" => $analytics->total_orders,
+            "total_earning" => number_format($analytics->total_earning, 2),
+            "total_refunded" => number_format($analytics->total_refunded, 2),
+            "total_users" => $analytics->total_users,
+            "today_orders" => $analytics->today_orders,
+            "month_orders" => $analytics->month_orders,
+            "year_orders" => $analytics->year_orders,
+            "last_update" => $analytics->updated_at->diffForHumans(),
         ]);
     }
 
