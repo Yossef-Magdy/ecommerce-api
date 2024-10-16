@@ -22,7 +22,7 @@ class ShippingObserver implements ShouldHandleEventsAfterCommit
         $analytics->updateLastUpdate();
 
         $shipping->order->payment->paid_amount -= $paidAmount;
-        $shipping->order->payment->outstand_amount += $paidAmount;
+        $shipping->order->payment->outstanding_amount += $paidAmount;
         $shipping->order->payment->save();
     }
 }
