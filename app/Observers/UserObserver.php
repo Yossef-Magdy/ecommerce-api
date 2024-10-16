@@ -4,25 +4,25 @@ namespace App\Observers;
 
 use App\Models\Core\Analytics;
 use App\Models\User;
+use App\Traits\AnalyticsHelper;
 
 class UserObserver
 {
+
+    use AnalyticsHelper;
     /**
      * Handle the User "created" event.
      */
     public function created(User $user): void
     {
-        $this->updateAnalyticsOnUserCreated();
+        $this->updateUserAnalytics(true);
     }
 
-    protected function updateAnalyticsOnUserCreated(): void
+    /**
+     * Handle the User "deleted" event.
+     */
+    public function deleted(User $user): void
     {
-        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
-
-        if (!$analytics) {
-            $analytics = Analytics::create(['created_at' => now()]);
-        }
-        $analytics->total_users++;
-        $analytics->updateLastUpdate();
+        $this->updateUserAnalytics(false);
     }
 }

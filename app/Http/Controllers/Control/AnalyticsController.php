@@ -10,18 +10,22 @@ use App\Models\Orders\OrderItem;
 use App\Models\Products\Product;
 use App\Models\Shipping\Shipping;
 use App\Models\User;
+use App\Traits\AnalyticsHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class AnalyticsController extends Controller
 {
+
+    use AnalyticsHelper;
+
     public function index(Request $request)
     {
-        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
+        $analytics = Analytics::whereDate('created_at', now()->toDateString())->first();
 
         if (!$analytics) {
-            $analytics = Analytics::create(['created_at' => now()]);
+            $analytics = $this->InitializeAnalytics();
         }
 
         return response()->json([
@@ -40,42 +44,7 @@ class AnalyticsController extends Controller
 
     public function update(Request $request)
     {
-        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
-
-        if (!$analytics) {
-            $analytics = Analytics::create(['created_at' => now()]);
-        }
-
-        $analytics->total_products = Product::count();
-        $analytics->total_categories = Category::count();
-        $analytics->total_orders = Order::count();
-
-        $analytics->total_refunded = Shipping::where('status', 'canceled')
-            ->with('order')
-            ->get()
-            ->sum(function ($shipping) {
-                return $shipping->order->orderItems->sum('total_price');
-            });
-
-        $analytics->total_earning = Shipping::where('status', '!=', 'canceled')
-            ->with('order')
-            ->get()
-            ->sum(function ($shipping) {
-                return $shipping->order->orderItems->sum('total_price');
-            });
-
-        $analytics->total_users = User::count();
-
-        $today = Carbon::today();
-        $month = Carbon::now()->month;
-        $year = Carbon::now()->year;
-
-        $analytics->today_orders = OrderItem::whereDate('created_at', $today)->count();
-        $analytics->month_orders = OrderItem::whereMonth('created_at', $month)->count();
-        $analytics->year_orders = OrderItem::whereYear('created_at', $year)->count();
-
-        $analytics->save();
-
+        $analytics = $this->InitializeAnalytics();
         return response()->json([
             "total_products" => $analytics->total_products,
             "total_categories" => $analytics->total_categories,

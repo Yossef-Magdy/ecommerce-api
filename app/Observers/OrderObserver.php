@@ -2,54 +2,23 @@
 
 namespace App\Observers;
 
-use App\Models\Core\Analytics;
 use App\Models\Orders\Order;
+use App\Traits\AnalyticsHelper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
 class OrderObserver implements ShouldHandleEventsAfterCommit
 {
+    use AnalyticsHelper;
+    
     /**
      * Handle the Order "created" event.
      */
     public function created(Order $order): void
     {
-        $this->updateAnalyticsOnOrderCreated($order);
+        $this->updateOrderAnalytics($order->payment->paid_amount, false);
         $this->clearCahe($order);
-    }
-    
-    private function updateAnalyticsOnOrderCreated($order)
-    {
-        // Get analytics for today
-        $analytics = Analytics::whereDate('created_at', date('Y-m-d'))->first();
-
-        if (!$analytics) {
-            $analytics = Analytics::create(['created_at' => now()]);
-        }
-
-        $analytics->total_orders++;
-        $analytics->total_earning += $order->payment->paid_amount;
-
-        if ($analytics->isUpdatedToday()) {
-            $analytics->today_orders++;
-        } else {
-            $analytics->today_orders = 1;
-        }
-
-        if ($analytics->isUpdatedLastMonth()) {
-            $analytics->month_orders = 1;
-        } else {
-            $analytics->month_orders++;
-        }
-
-        if ($analytics->isUpdatedLastYear()) {
-            $analytics->year_orders = 1;
-        } else {
-            $analytics->year_orders++;
-        }
-
-        $analytics->updateLastUpdate();
-    }
+    }    
 
     private function clearCahe($order)
     {
