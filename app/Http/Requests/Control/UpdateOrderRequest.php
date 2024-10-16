@@ -23,7 +23,7 @@ class UpdateOrderRequest extends FormRequest
     {
         return [
             'shipping_status' => ['nullable', 'string', 'in:pending,processing,shipped,delivered,canceled'],
-            'payment_status' => ['nullable', 'string', 'in:pending,processing,completed,canceled'],
+            'payment_status' => ['nullable', 'string', 'in:pending,processing,completed,canceled,incomplete'],
         ];
     }
 
