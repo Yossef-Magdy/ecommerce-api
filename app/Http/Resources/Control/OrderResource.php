@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Control;
 
+use App\Http\Resources\CouponResource;
+use App\Http\Resources\OrderItemResource;
+use App\Http\Resources\PaymentResource;
+use App\Http\Resources\ShippingResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +29,7 @@ class OrderResource extends JsonResource
             'paid_amount' => (float) $this->payment->paid_amount,
             'outstanding_amount' => (float) $this->payment->outstanding_amount,
             'total_price' => $totalOrderPrice,
+            'customer' => $this->shipping->shippingDetails->user,
             'shipping' => new ShippingResource($this->shipping),
             'payment' => new PaymentResource($this->payment),
             'coupon' => $this->orderCoupon ? new CouponResource($this->orderCoupon->coupon) : null,

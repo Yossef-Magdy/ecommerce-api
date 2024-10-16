@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
 use App\Http\Requests\Control\UpdateOrderRequest;
-use App\Http\Resources\OrderResource;
+use App\Http\Resources\Control\OrderResource;
 
 class OrderController extends Controller
 {
