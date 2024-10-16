@@ -5,7 +5,6 @@ namespace App\Observers;
 use App\Models\Core\Analytics;
 use App\Models\Shipping\Shipping;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
-use Illuminate\Support\Facades\Log;
 
 class ShippingObserver implements ShouldHandleEventsAfterCommit
 {
@@ -18,8 +17,6 @@ class ShippingObserver implements ShouldHandleEventsAfterCommit
 
         $paidAmount = $shipping->order?->payment?->paid_amount ?? 0;
         
-        Log::info("Catched from Observer Shipping updated: {$shipping->order->id}");
-
         $analytics->total_earning -= $paidAmount;
         $analytics->total_refunded += $paidAmount;
         $analytics->updateLastUpdate();
