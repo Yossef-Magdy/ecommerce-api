@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\OrderCreated;
-use App\Events\OrderRefunded;
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +13,6 @@ use App\Models\Core\Coupon;
 use App\Models\Products\ProductDetail;
 use App\Models\Shipping\ShippingDetail;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\PaymentIntent;

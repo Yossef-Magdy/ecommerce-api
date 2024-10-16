@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Control\StorePermissionRequest;
 use App\Http\Resources\PermissionResource;
 use App\Models\Roles\Permission;
-use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
