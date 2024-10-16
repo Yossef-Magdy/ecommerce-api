@@ -48,7 +48,6 @@ class ProductController extends Controller
             $product->subcategories()->attach($request['subcategories']);
 
             DB::commit();
-            event(new ProductCreated($product));
         } catch (Exception $error) {
             DB::rollBack();
             return response()->json([
@@ -107,7 +106,6 @@ class ProductController extends Controller
             }
             $product->delete();
             DB::commit();
-            event(new ProductDeleted($product));
         } catch (Exception $errors) {
             DB::rollBack();
             return response()->json([

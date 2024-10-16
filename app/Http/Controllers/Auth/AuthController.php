@@ -54,7 +54,6 @@ class AuthController extends Controller
                     'email' => $email,
                     'password' => bcrypt(Str::random(16)),
                 ]);
-                event(new UserCreated($user));
             }
     
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -90,7 +89,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'User already exists'], 409);
         }
         $user = User::create($request->validated());
-        event(new UserCreated($user));
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }

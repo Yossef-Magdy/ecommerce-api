@@ -13,7 +13,9 @@ use Illuminate\Support\ServiceProvider;
 use App\Observers\OrderObserver;
 use App\Models\Orders\Order;
 use App\Models\Products\Product;
+use App\Models\Shipping\Shipping;
 use App\Observers\ProductObserver;
+use App\Observers\ShippingObserver;
 use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,23 +45,6 @@ class AppServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         User::observe(UserObserver::class);
         Product::observe(ProductObserver::class);
+        Shipping::observe(ShippingObserver::class);
     }
-
-    protected $listen = [
-        OrderCreated::class => [
-            OrderObserver::class,
-        ],
-        OrderRefunded::class => [
-            OrderObserver::class,
-        ],
-        UserCreated::class => [
-            UserObserver::class,
-        ],
-        ProductCreated::class => [
-            ProductObserver::class,
-        ],
-        ProductDeleted::class => [
-            ProductObserver::class,
-        ],
-    ];
 }
