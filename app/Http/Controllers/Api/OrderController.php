@@ -303,18 +303,18 @@ class OrderController extends Controller
     public function update(UpdateOrderRequest $request, Order $order)
     {
         // Check if order user is same as authenticated user
-        // if ($order->user_id !== Auth::id()) {
-        //     return response()->json([
-        //         'message' => 'Forbidden'
-        //     ], 403);
-        // }
+        if ($order->user_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Forbidden'
+            ], 403);
+        }
 
         // Check if order is already canceled
-        // if ($order->shipping['status'] === 'canceled') {
-        //     return response()->json([
-        //         'message' => 'Shipping status is already canceled'
-        //     ], 403);
-        // }
+        if ($order->shipping['status'] === 'canceled') {
+            return response()->json([
+                'message' => 'Shipping status is already canceled'
+            ], 403);
+        }
 
         DB::beginTransaction();
         try {
