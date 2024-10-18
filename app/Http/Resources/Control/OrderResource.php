@@ -29,7 +29,7 @@ class OrderResource extends JsonResource
             'paid_amount' => (float) $this->payment->paid_amount,
             'outstanding_amount' => (float) $this->payment->outstanding_amount,
             'total_price' => $totalOrderPrice,
-            'customer' => $this->shipping->shippingDetails->user,
+            'customer' => $this->user,
             'shipping' => new ShippingResource($this->shipping),
             'payment' => new PaymentResource($this->payment),
             'coupon' => $this->orderCoupon ? new CouponResource($this->orderCoupon->coupon) : null,
