@@ -23,7 +23,7 @@ class StoreCouponRequest extends FormRequest
     {
         return [
             'coupon_code' => ['required', 'alpha_dash', 'unique:coupons,coupon_code'],
-            'uses_count' => ['integer'],
+            'uses_count' => ['integer', 'min:50'],
             'discount_type' => ['in:fixed,percentage'],
             'discount_value' => ['required', 'numeric', 
                 function ($attribute, $value, $fail) {

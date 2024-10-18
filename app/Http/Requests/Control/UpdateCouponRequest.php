@@ -24,7 +24,7 @@ class UpdateCouponRequest extends FormRequest
     {
         return [
             'coupon_code' => ['alpha_dash', 'unique:coupons,coupon_code,'.$this->id.',id'],
-            'uses_count' => ['integer'],
+            'uses_count' => ['integer', 'min:50'],
             'discount_type' => ['in:fixed,percentage'],
             'discount_value' => ['numeric', 
                 function ($attribute, $value, $fail) {

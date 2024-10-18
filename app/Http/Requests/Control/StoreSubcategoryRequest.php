@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Control;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSubcategoryRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class StoreSubcategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
+            'name' => ['required', 'string', Rule::unique('subcategories', 'name')->where('category_id', $this->category_id)],
             'category_id' => ['required', 'exists:categories,id'],
         ];
     }

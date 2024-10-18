@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Control;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSubcategoryRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class UpdateSubcategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string'],
+            'name' => ['string', Rule::unique('subcategories', 'name')->where('category_id', $this->category_id)->ignore($this->id)],
             'category_id' => ['exists:categories,id'],
         ];
     }
