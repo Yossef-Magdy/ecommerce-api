@@ -36,7 +36,7 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
-        return $this->updatedResponse(CategoryResource::make($category));
+        return $this->updatedResponse(ControlCategoryResource::make($category));
     }
 
     /**
