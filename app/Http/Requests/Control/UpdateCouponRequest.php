@@ -23,7 +23,7 @@ class UpdateCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'coupon_code' => ['string', 'unique:coupons,coupon_code,'.$this->id.',id'],
+            'coupon_code' => ['alpha_dash', 'unique:coupons,coupon_code,'.$this->id.',id'],
             'uses_count' => ['integer'],
             'discount_type' => ['in:fixed,percentage'],
             'discount_value' => ['numeric', 

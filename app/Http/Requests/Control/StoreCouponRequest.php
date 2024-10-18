@@ -22,7 +22,7 @@ class StoreCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'coupon_code' => ['required', 'string', 'unique:coupons,coupon_code'],
+            'coupon_code' => ['required', 'alpha_dash', 'unique:coupons,coupon_code'],
             'uses_count' => ['integer'],
             'discount_type' => ['in:fixed,percentage'],
             'discount_value' => ['required', 'numeric', 

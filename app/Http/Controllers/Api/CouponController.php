@@ -8,8 +8,9 @@ use App\Models\Core\Coupon;
 
 class CouponController extends Controller
 {
-    public function show(Coupon $coupon)
+    public function show(string $couponCode)
     {
+        $coupon = Coupon::where("coupon_code", $couponCode)->firstOrFail();
         return CouponResource::make($coupon);
     }
 }
