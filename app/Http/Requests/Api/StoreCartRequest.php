@@ -23,7 +23,7 @@ class StoreCartRequest extends FormRequest
     {
         return [
             'items' => ['required', 'array'],
-            'items.*.id' => ['required', 'exists:products,id'],
+            'items.*.productDetailId' => ['required', 'exists:product_details,id'],
         ];
     }
 
@@ -36,8 +36,8 @@ class StoreCartRequest extends FormRequest
     {
         return [
             'items.required' => 'Items are required',
-            'items.*.id.required' => 'Product ID is required',
-            'items.*.id.exists' => 'Product not found',
+            'items.*.productDetailId.required' => 'Product detail ID is required',
+            'items.*.productDetailId.exists' => 'Product detail not found',
         ];
     }
 }
