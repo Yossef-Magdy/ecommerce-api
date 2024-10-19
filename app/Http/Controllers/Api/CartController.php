@@ -9,18 +9,22 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function saveCart(StoreCartRequest $request)
+    public function index(Request $request)
+    {
+        $cart = Cart::where('user_id', $request->user()->id)->first();
+        if ($cart) {
+            $cart->delete();
+            return response()->json($cart->items);
+        };
+        return response()->json([]);
+    }
+
+    public function store(StoreCartRequest $request)
     {
         $cart = Cart::firstOrNew(['user_id' => $request->user()->id]);
         $cart->items = $request->items;
         $cart->save();
 
         return response()->json($cart);
-    }
-
-    public function getCart(Request $request)
-    {
-        $cart = Cart::where('user_id', $request->user()->id)->first();
-        return response()->json($cart ? $cart->items : []);
     }
 }

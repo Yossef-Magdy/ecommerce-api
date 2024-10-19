@@ -72,6 +72,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/orders', OrderController::class)->only(['index', 'store','show', 'update']);
 
     // Cart
-    Route::get('/cart', [CartController::class, 'getCart']);
-    Route::post('/cart', [CartController::class, 'saveCart']);
+    Route::apiResource('/cart', CartController::class)->only(['index', 'store']);
 });
