@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BestSellerController;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CollectionController;
 use App\Http\Controllers\Api\CouponController;
@@ -69,4 +70,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/shipping-details', ShippingDetailsController::class);
     Route::apiResource('/orders', OrderController::class)->only(['index', 'store','show', 'update']);
+
+    // Cart
+    Route::get('/cart', [CartController::class, 'getCart']);
+    Route::post('/cart', [CartController::class, 'saveCart']);
 });
