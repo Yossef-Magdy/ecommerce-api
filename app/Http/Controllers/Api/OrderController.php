@@ -28,7 +28,15 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return OrderResource::collection(Order::with('orderItems', 'orderCoupon.coupon')->where('user_id', Auth::id())->latest()->paginate(10));
+        return OrderResource::collection(
+            Order::with('orderItems', 'orderCoupon.coupon')
+                ->where('user_id', Auth::id())
+                ->whereHas('shipping', function ($query) {
+                    $query->where('status', '!=', 'canceled');
+                })
+                ->latest()
+                ->paginate(10)
+        );
     }
 
     /**
@@ -313,8 +321,20 @@ class OrderController extends Controller
             ], 403);
         }
 
+        // Check if order is already delivered
+        if ($order->shipping['status'] === 'delivered') {
+            return response()->json([
+                'message' => 'Shipping status is already delivered'
+            ], 403);
+        }
+
         DB::beginTransaction();
         try {
+            foreach ($order->orderItems as $item) {
+                $productDetail = ProductDetail::findOrFail($item->product_detail_id);
+                $productDetail->increment('stock', $item->quantity);
+            }
+
             $order->shipping->update(['status' => 'canceled']);
             $order->save();
 
