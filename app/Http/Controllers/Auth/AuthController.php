@@ -28,7 +28,26 @@ class AuthController extends Controller
         // }
         
         $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
+        return response()->json([
+            'token' => ['access_token' => $token, 'token_type' => 'Bearer'],
+            'data' => [
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'roles' => $user->roles->map(function ($role) {
+                    return [
+                        'name' => $role->name,
+                        'permissions' => $role->permissions->map(function ($permission) {
+                            return $permission->name;
+                        }),
+                    ];
+                }),
+                'permissions' => $user->permissions->map(function ($permission) {
+                    return $permission->name;
+                }),
+            ]
+        ]);
     }
 
     function google(LoginGoogleRequest $request)
