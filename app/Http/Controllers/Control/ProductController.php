@@ -90,7 +90,7 @@ class ProductController extends Controller
                 'message' => $error->getMessage()
             ], 500);
         }
-        return $this->updatedResponse(ProductResource::make($product));
+        return $this->updatedResponse(ProductResource::make($product->refresh()));
     }
 
     public function destroy(Product $product)
@@ -127,14 +127,17 @@ class ProductController extends Controller
 
     private function uploadProductImages($request, $productId)
     {
+        ProductImage::where('product_id', $productId)->delete();
+        $images = [];
         if ($request->hasFile('product_images')) {
             foreach ($request->file('product_images') as $image) {
                 $imagePath = $image->store('', 'product_images');
-                ProductImage::create([
+                $images[] = [
                     'product_id' => $productId,
                     'image_url' => $imagePath,
-                ]);
+                ];
             }
         }
+        ProductImage::insert($images);
     }
 }

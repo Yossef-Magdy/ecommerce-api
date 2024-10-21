@@ -4,6 +4,7 @@ namespace App\Http\Resources\Control;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\ProductImagesResource;
 
 class ProductResource extends JsonResource
 {
@@ -22,6 +23,8 @@ class ProductResource extends JsonResource
             'cover_image' => asset("cover/{$this->cover_image}"),
             'discount' => $this->discount,
             'categories' => $this->categories,
+            'images' => ProductImagesResource::collection($this->images),
+            'subcategories' => $this->subcategores,
             'stock' => $this->details->pluck('stock')->sum(),
         ];
     }
