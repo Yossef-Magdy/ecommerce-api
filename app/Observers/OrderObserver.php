@@ -18,7 +18,7 @@ class OrderObserver implements ShouldHandleEventsAfterCommit
     {
         $this->updateOrderAnalytics($order->payment->paid_amount, false);
         $this->clearCahe($order);
-    }    
+    }
 
     private function clearCahe($order)
     {
