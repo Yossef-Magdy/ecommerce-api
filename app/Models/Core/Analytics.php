@@ -12,8 +12,6 @@ class Analytics extends Model
     protected $table = 'analytics';
 
     protected $fillable = [
-        'total_products',
-        'total_categories',
         'total_orders',
         'total_earning',
         'total_refunded',

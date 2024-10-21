@@ -41,8 +41,6 @@ class AppServiceProvider extends ServiceProvider
 
         Order::observe(OrderObserver::class);
         User::observe(UserObserver::class);
-        Product::observe(ProductObserver::class);
-        Category::observe(CategoryObserver::class);
         Payment::observe(PaymentObserver::class);
     }
 }

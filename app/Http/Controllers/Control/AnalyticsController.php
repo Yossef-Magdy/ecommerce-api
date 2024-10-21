@@ -19,8 +19,6 @@ class AnalyticsController extends Controller
     {
         $analytics = $this->getOrCreateDailyAnalytics();
         return response()->json([
-            "total_products" => $analytics->total_products,
-            "total_categories" => $analytics->total_categories,
             "total_orders" => $analytics->total_orders,
             "total_earning" => number_format($analytics->total_earning, 2),
             "total_refunded" => number_format($analytics->total_refunded, 2),
@@ -91,8 +89,6 @@ class AnalyticsController extends Controller
         $statistics = $analyticsData->map(function ($analytics) {
             return [
                 'date' => $analytics->created_at->toDateString(),
-                'total_products' => $analytics->total_products,
-                'total_categories' => $analytics->total_categories,
                 'total_orders' => $analytics->total_orders,
                 'total_earning' => number_format($analytics->total_earning, 2),
                 'total_refunded' => number_format($analytics->total_refunded, 2),
@@ -124,8 +120,6 @@ class AnalyticsController extends Controller
         $statistics = $analyticsData->map(function ($analytics) {
             return [
                 'date' => $analytics->created_at->toDateString(),
-                'total_products' => $analytics->total_products,
-                'total_categories' => $analytics->total_categories,
                 'total_orders' => $analytics->total_orders,
                 'total_earning' => number_format($analytics->total_earning, 2),
                 'total_refunded' => number_format($analytics->total_refunded, 2),

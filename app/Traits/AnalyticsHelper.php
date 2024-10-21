@@ -41,19 +41,9 @@ trait AnalyticsHelper
         $analytics->save();
     }
 
-    protected function updateProductAnalytics($isAdded = true)
-    {
-        $this->updateAnalytics('total_products', $isAdded ? 1 : -1);
-    }
-
     protected function updateUserAnalytics($isAdded = true)
     {
         $this->updateAnalytics('total_users', $isAdded ? 1 : -1);
-    }
-
-    protected function updateCategoryAnalytics($isAdded = true)
-    {
-        $this->updateAnalytics('total_categories', $isAdded ? 1 : -1);
     }
 
     protected function getAnalyticsForDays($days)
