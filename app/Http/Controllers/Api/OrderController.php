@@ -117,7 +117,7 @@ class OrderController extends Controller
             return response()->json([
                 'message' => $error->getMessage(),
                 'success' => false
-            ], 400);
+            ], 200);
         }
     }
 
@@ -350,7 +350,7 @@ class OrderController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => $error->getMessage(),
-            ], 400);
+            ], 200);
         }
     }
 }
