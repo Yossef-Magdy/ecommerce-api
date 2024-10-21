@@ -33,6 +33,7 @@ class ProductDetailsResource extends JsonResource
             'details' => $details,
             'reviews' => $reviews,
             'rating' => $averageRating,
+            'discount' => DiscountResource::make($this->discount),
             'categories' => CategoryResource::collection($this->categories),
             'subcategories' => SubcategoryResource::collection($this->subcategories),
             'cover_image' => asset("cover/{$this->cover_image}"),

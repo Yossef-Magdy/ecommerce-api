@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreProductDiscountRequest;
+use App\Http\Requests\Control\UpdateProductDiscountRequest;
+use App\Http\Resources\Control\DiscountResource;
 use App\Models\Products\ProductDiscount;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,29 +21,23 @@ class ProductDiscountController extends Controller
         ], 200);
     }
 
-    public function show($id)
+    public function show(ProductDiscount $discount)
     {
-        return response()->json([
-            'message' => 'Discount retrieved successfully',
-            'data' => ProductDiscount::find($id),
-        ], 200);
+        return DiscountResource::make($discount);
     }
 
     public function store(StoreProductDiscountRequest $request)
     {
-        $produc_discount = null;
-
-        // check if discount already exists
+        $product_discount = null;
         $discount = ProductDiscount::where('product_id', $request['product_id'])->exists();
         if ($discount) {
             return response()->json([
                 'message' => 'This product already has a discount',
             ], 422);
         }
-
         DB::beginTransaction();
         try {
-            $produc_discount = ProductDiscount::create($request->all());
+            $product_discount = ProductDiscount::create($request->validated());
             DB::commit();
         } catch (Exception $errors) {
             DB::rollBack();
@@ -50,49 +46,18 @@ class ProductDiscountController extends Controller
                 'errors' => $errors->getMessage(),
             ], 422);
         }
-
-        return response()->json([
-            'message' => 'Discount created successfully',
-            'data' => $produc_discount,
-        ], 201);
+        return $this->createdResponse(DiscountResource::make($product_discount->refresh()));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductDiscountRequest $request, ProductDiscount $discount)
     {
-        // Find discount
-        $discount = ProductDiscount::find($id);
-
-        // Check if discount exists
-        if (!$discount) {
-            return response()->json([
-                'message' => 'Discount not found',
-            ], 404);
-        }
-
-        // Update discount and return response
-        $discount->update($request->all());
-        return response()->json([
-            'message' => 'Discount updated successfully',
-            'data' => $discount,
-        ], 200);
+        $discount->update($request->validated());
+        return $this->updatedResponse(DiscountResource::make($discount->refresh()));
     }
 
-    public function destroy($id)
+    public function destroy(ProductDiscount $discount)
     {
-        // Find discount
-        $discount = ProductDiscount::find($id);
-
-        // Check if discount exists
-        if (!$discount) {
-            return response()->json([
-                'message' => 'Discount not found',
-            ], 404);
-        }
-
-        // Delete discount and return response
         $discount->delete();
-        return response()->json([
-            'message' => 'Discount deleted successfully',
-        ], 200);
+        return $this->deletedResponse();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Control;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductDiscountRequest extends FormRequest
+class UpdateProductDiscountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class StoreProductDiscountRequest extends FormRequest
         return [
             'status' => ['in:active,closed'],
             'expiry_date' => ['date'],
-            'type' => ['required', 'in:fixed,percentage'],
-            'value' => ['required', 'numeric'],
+            'type' => ['in:fixed,percentage'],
+            'value' => ['numeric'],
             'product_id' => ['required', 'exists:products,id']
         ];
     }
@@ -33,9 +33,7 @@ class StoreProductDiscountRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'type.required_if' => 'Discount type is required when status is active',
             'type.in' => 'Discount type must be one of: fixed, percentage',
-            'value.required' => 'Discount value is required',
             'product_id.exists:products,id' => 'Product not found',
             'status.in' => 'Status must be one of: active, closed',
             'expiry_date.date' => 'Expire date must be a date',

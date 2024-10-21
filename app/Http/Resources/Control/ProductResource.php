@@ -21,7 +21,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'description' => $this->description,
             'cover_image' => asset("cover/{$this->cover_image}"),
-            'discount' => $this->discount,
+            'discount' => DiscountResource::make($this->discount),
             'categories' => $this->categories,
             'images' => ProductImagesResource::collection($this->images),
             'subcategories' => $this->subcategores,
