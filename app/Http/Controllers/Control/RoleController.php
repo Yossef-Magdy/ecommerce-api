@@ -8,7 +8,6 @@ use App\Http\Requests\Control\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Roles\Role;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller

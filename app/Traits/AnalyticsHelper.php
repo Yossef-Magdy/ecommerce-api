@@ -13,106 +13,41 @@ use Carbon\Carbon;
 
 trait AnalyticsHelper
 {
+    protected function getOrCreateDailyAnalytics()
+    {
+        return Analytics::whereDate('created_at', now()->toDateString())->first() ?? Analytics::create(['created_at' => now()]);
+    }
+
+    protected function updateAnalytics($field, $amount)
+    {
+        $analytics = $this->getOrCreateDailyAnalytics();
+        $analytics->{$field} += $amount;
+        $analytics->save();
+    }
+
     protected function updateOrderAnalytics($amount, $isRefund = false)
     {
-        $analytics = Analytics::whereDate('created_at', now()->toDateString())->first();
-
-        if (!$analytics) return $this->InitializeAnalytics();
+        $analytics = $this->getOrCreateDailyAnalytics();
 
         if ($isRefund) {
             $analytics->total_earning -= $amount;
             $analytics->total_refunded += $amount;
+            // $analytics->total_orders--; // uncomment if you want update total_orders count when order canceled
         } else {
             $analytics->total_earning += $amount;
             $analytics->total_orders++;
-            $analytics->today_orders++;
-            $analytics->month_orders++;
-            $analytics->year_orders++;
         }
 
-        $analytics->updateLastUpdate();
-    }
-
-    protected function updateProductAnalytics($isAdded = true)
-    {
-
-        $analytics = Analytics::whereDate('created_at', now()->toDateString())->first();
-
-        if (!$analytics) return $this->InitializeAnalytics();
-
-        if ($isAdded) {
-            $analytics->total_products++;
-            $analytics->updateLastUpdate();
-        } else {
-            $analytics->total_products--;
-            $analytics->updateLastUpdate();
-        }
+        $analytics->save();
     }
 
     protected function updateUserAnalytics($isAdded = true)
     {
-
-        $analytics = Analytics::whereDate('created_at', now()->toDateString())->first();
-
-        if (!$analytics) return $this->InitializeAnalytics();
-
-        if ($isAdded) {
-            $analytics->total_users++;
-            $analytics->updateLastUpdate();
-        } else {
-            $analytics->total_users--;
-            $analytics->updateLastUpdate();
-        }
+        $this->updateAnalytics('total_users', $isAdded ? 1 : -1);
     }
 
-    protected function updateCategoryAnalytics($isAdded = true)
+    protected function getAnalyticsForDays($days)
     {
-        $analytics = Analytics::whereDate('created_at', now()->toDateString())->first();
-
-        if (!$analytics) return $this->InitializeAnalytics();
-
-        if ($isAdded) {
-            $analytics->total_categories++;
-            $analytics->updateLastUpdate();
-        } else {
-            $analytics->total_categories--;
-            $analytics->updateLastUpdate();
-        }
-    }
-
-    protected function InitializeAnalytics()
-    {
-        $analytics = Analytics::whereDate('created_at', now()->toDateString())->first();
-
-        if (!$analytics) {
-            $analytics = Analytics::create(['created_at' => now()]);
-        }
-
-        $analytics->total_products = Product::count();
-        $analytics->total_categories = Category::count();
-        $analytics->total_orders = Order::count();
-        $analytics->total_users = User::count();
-
-        $analytics->total_refunded = Shipping::where('status', 'canceled')
-            ->with('order')
-            ->get()
-            ->sum(function ($shipping) {
-                return $shipping->order->orderItems->sum('total_price');
-            });
-
-        $analytics->total_earning = Shipping::where('status', '!=', 'canceled')
-            ->with('order')
-            ->get()
-            ->sum(function ($shipping) {
-                return $shipping->order->orderItems->sum('total_price');
-            });
-
-        $analytics->today_orders = OrderItem::whereDate('created_at', Carbon::today())->count();
-        $analytics->month_orders = OrderItem::whereMonth('created_at', Carbon::now()->month)->count();
-        $analytics->year_orders = OrderItem::whereYear('created_at', Carbon::now()->year)->count();
-
-        $analytics->save();
-
-        return $analytics;
+        return Analytics::whereBetween('created_at', [now()->subDays($days), now()])->get();
     }
 }
