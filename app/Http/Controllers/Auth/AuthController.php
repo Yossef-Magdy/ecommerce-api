@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\UserCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginGoogleRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Error;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

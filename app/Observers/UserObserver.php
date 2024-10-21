@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Models\Core\Analytics;
 use App\Models\User;
 use App\Traits\AnalyticsHelper;
 

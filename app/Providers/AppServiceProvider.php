@@ -2,17 +2,13 @@
 
 namespace App\Providers;
 
-use App\Models\Categories\Category;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\OrderObserver;
 use App\Models\Orders\Order;
 use App\Models\Payments\Payment;
-use App\Models\Products\Product;
-use App\Observers\CategoryObserver;
 use App\Observers\PaymentObserver;
-use App\Observers\ProductObserver;
 use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
