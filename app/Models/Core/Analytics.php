@@ -18,14 +18,5 @@ class Analytics extends Model
         'total_earning',
         'total_refunded',
         'total_users',
-        'today_orders',
-        'month_orders',
-        'year_orders',
     ];
-
-    public function updateLastUpdate()
-    {
-        $this->updated_at = now();
-        $this->save();
-    }
 }
