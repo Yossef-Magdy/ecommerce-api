@@ -340,6 +340,8 @@ class OrderController extends Controller
             }
 
             $order->shipping->update(['status' => 'canceled']);
+            $order->payment->update(['status' => 'canceled']);
+
             $order->save();
 
             DB::commit();

@@ -62,14 +62,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/orders', ControlOrderController::class)->only(['index', 'show', 'update']);
         Route::apiResource('/governorates', ControlGovernorateController::class)->except(['show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
-        Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'update', 'show']);
+        Route::get('/analytics/statistics/range', [AnalyticsController::class, 'getStatisticsForDateRange']);
+        Route::get('/analytics/statistics/{days}', [AnalyticsController::class, 'getStatisticsForDays']);
+        Route::apiResource('/analytics', AnalyticsController::class)->only(['index', 'show']);
         Route::apiResource('/roles', RoleController::class);
         Route::apiResource('/permissions', PermissionController::class)->only(['index', 'show']);
     });
 
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/shipping-details', ShippingDetailsController::class);
-    Route::apiResource('/orders', OrderController::class)->only(['index', 'store','show', 'update']);
+    Route::apiResource('/orders', OrderController::class)->only(['index', 'store', 'show', 'update']);
 
     // Cart
     Route::apiResource('/cart', CartController::class)->only(['index', 'store']);
