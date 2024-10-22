@@ -19,10 +19,10 @@ class AnalyticsController extends Controller
     {
         $analytics = $this->getOrCreateDailyAnalytics();
         return response()->json([
-            "total_orders" => $analytics->total_orders,
+            "total_orders" => $analytics->total_orders ?? 0,
             "total_earning" => number_format($analytics->total_earning, 2),
             "total_refunded" => number_format($analytics->total_refunded, 2),
-            "total_users" => $analytics->total_users,
+            "total_users" => $analytics->total_users ?? 0,
             "last_update" => $analytics->updated_at->diffForHumans(),
         ]);
     }

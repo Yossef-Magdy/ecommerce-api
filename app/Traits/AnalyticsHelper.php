@@ -2,14 +2,7 @@
 
 namespace App\Traits;
 
-use App\Models\Categories\Category;
 use App\Models\Core\Analytics;
-use App\Models\Orders\Order;
-use App\Models\Orders\OrderItem;
-use App\Models\Products\Product;
-use App\Models\Shipping\Shipping;
-use App\Models\User;
-use Carbon\Carbon;
 
 trait AnalyticsHelper
 {
@@ -29,15 +22,34 @@ trait AnalyticsHelper
     {
         $analytics = $this->getOrCreateDailyAnalytics();
 
-        if ($isRefund) {
-            $analytics->total_earning -= $amount;
-            $analytics->total_refunded += $amount;
-            // $analytics->total_orders--; // uncomment if you want update total_orders count when order canceled
-        } else {
-            $analytics->total_earning += $amount;
+        if (!$isRefund) {
             $analytics->total_orders++;
         }
 
+        $analytics->save();
+
+        $this->updateEarningAnalytics($amount, $isRefund);
+    }
+
+    protected function updateEarningAnalytics($amount, $isRefund = false)
+    {
+        $analytics = $this->getOrCreateDailyAnalytics();
+
+        if ($isRefund) {
+            $analytics->total_earning -= $amount;
+            $analytics->total_refunded += $amount;
+        } else {
+            $analytics->total_earning += $amount;
+        }
+
+        $analytics->save();
+    }
+
+    protected function backEarningAnalytics($amount)
+    {
+        $analytics = $this->getOrCreateDailyAnalytics();
+        $analytics->total_earning += $amount;
+        $analytics->total_refunded -= $amount;
         $analytics->save();
     }
 

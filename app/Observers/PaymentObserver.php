@@ -15,7 +15,7 @@ class PaymentObserver implements ShouldHandleEventsAfterCommit
     public function created(Payment $payment): void
     {
         if ($payment->status === 'succeeded') {
-            $this->updateOrderAnalytics($payment->paid_amount, false);
+            $this->updateEarningAnalytics($payment->paid_amount, false);
         }
     }
 
@@ -26,13 +26,18 @@ class PaymentObserver implements ShouldHandleEventsAfterCommit
     {
         if ($payment->status === 'succeeded' || $payment->status === 'completed') {
             if ($payment->outstanding_amount > 0) {
-                $this->updateOrderAnalytics($payment->outstanding_amount, false);
-                $payment->paid_amount += $payment->outstanding_amount;
-                $payment->outstanding_amount = 0;
-                $payment->save();
+                $this->updateEarningAnalytics($payment->outstanding_amount, false);
+
+                Payment::withoutEvents(function () use ($payment) {
+                    $payment->paid_amount += $payment->outstanding_amount;
+                    $payment->outstanding_amount = 0;
+                    $payment->save();
+                });
+            } else {
+                $this->backEarningAnalytics($payment->paid_amount);
             }
-        } else {
-            $this->updateOrderAnalytics($payment->paid_amount, true);
+        } else if ($payment->status === 'canceled') {
+            $this->updateEarningAnalytics($payment->paid_amount, true);
         }
     }
 }
