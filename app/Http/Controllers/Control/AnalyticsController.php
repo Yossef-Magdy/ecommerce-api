@@ -90,8 +90,8 @@ class AnalyticsController extends Controller
             return [
                 'date' => $analytics->created_at->toDateString(),
                 'total_orders' => $analytics->total_orders,
-                'total_earning' => number_format($analytics->total_earning, 2),
-                'total_refunded' => number_format($analytics->total_refunded, 2),
+                'total_earning' => (float) $analytics->total_earning,
+                'total_refunded' => (float) $analytics->total_refunded,
                 'total_users' => $analytics->total_users,
                 'last_update' => $analytics->updated_at->diffForHumans(),
             ];
