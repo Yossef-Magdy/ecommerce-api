@@ -24,7 +24,7 @@ class ProductResource extends JsonResource
             'discount' => DiscountResource::make($this->discount),
             'categories' => $this->categories,
             'images' => ProductImagesResource::collection($this->images),
-            'subcategories' => $this->subcategores,
+            'subcategories' => $this->subcategories,
             'stock' => $this->details->pluck('stock')->sum(),
         ];
     }
