@@ -49,13 +49,13 @@ class OrderController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
             $coupon = $this->validateCoupon($data['coupon'] ?? null);
-            $dilevryCharge = ShippingDetail::findOrFail($data['shipping_detail_id'])?->governorate?->fee ?? 50;
+            $delieveryCharge = ShippingDetail::findOrFail($data['shipping_detail_id'])?->governorate?->fee ?? 50;
 
             $this->updateProductQuantities($data['items'], $coupon);
 
             // Create order
             $newOrder = Order::create($data);
-            $amount = array_sum(array_column($data['items'], 'total_price')) + $dilevryCharge;
+            $amount = array_sum(array_column($data['items'], 'total_price')) + $delieveryCharge;
 
             // Create Stripe charge if payment method is Stripe Method 1
             $charge = null;
