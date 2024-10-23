@@ -44,17 +44,9 @@ class Coupon extends Model
         return $this->uses_count === 0;
     }
 
-    public function updateStatus() {
+    public function getStatusAttribute() {
         $active = Carbon::make($this->expiry_date)->gt(Carbon::now());
         $available = $this->uses_count > 0;
-        if ($active && $available) {
-            if ($this->status == 'expired') {
-                $this->update(['status' => 'active']);
-            }
-        } else {
-            if ($this->status == 'active') {
-                $this->update(['status' => 'expired']);
-            }
-        }
+        return $active && $available ? 'active' : 'expired';
     }
 }

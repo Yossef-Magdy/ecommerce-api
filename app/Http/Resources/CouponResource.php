@@ -14,7 +14,6 @@ class CouponResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->updateStatus();
         return [
             'id' => $this->id,
             'coupon_code' => $this->coupon_code,
