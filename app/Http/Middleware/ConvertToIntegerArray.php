@@ -18,6 +18,9 @@ class ConvertToIntegerArray
         if ($request->has('categories')) {
             $request->request->set('categories', json_decode($request->categories));
         }
+        if ($request->has('subcategories')) {
+            $request->request->set('subcategories', json_decode($request->subcategories));
+        }
         return $next($request);
     }
 }

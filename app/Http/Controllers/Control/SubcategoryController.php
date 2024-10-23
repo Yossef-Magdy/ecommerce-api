@@ -7,6 +7,7 @@ use App\Http\Requests\Control\StoreSubcategoryRequest;
 use App\Http\Requests\Control\UpdateSubcategoryRequest;
 use App\Http\Resources\SubcategoryResource;
 use App\Models\Categories\Subcategory;
+use App\Models\Products\Product;
 
 class SubcategoryController extends Controller
 {
@@ -46,5 +47,11 @@ class SubcategoryController extends Controller
     {
         $subcategory->delete();
         return $this->deletedResponse();
+    }
+
+    public function getProductPossibleSubcategories(Product $product) {
+        $categories = $product->categories;
+        $subcategories = Subcategory::select(['id', 'name', 'category_id'])->with('category:id,name')->whereIn('category_id', $categories->pluck('id'))->get();
+        return $subcategories;
     }
 }

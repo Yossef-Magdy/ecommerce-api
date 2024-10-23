@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/categories', ControlCategoryController::class)->except(['show']);
         Route::apiResource('/coupons', ControlCouponController::class)->except(['show']);
         Route::apiResource('/subcategories', ControlSubcategoryController::class)->except(['show']);
+        Route::get('/possible-subcategories/{product}', [ControlSubcategoryController::class, 'getProductPossibleSubcategories']);
         Route::apiResource('/orders', ControlOrderController::class)->only(['index', 'show', 'update']);
         Route::apiResource('/governorates', ControlGovernorateController::class)->except(['show']);
         Route::apiResource('/reviews', ControlProductReviewsController::class)->only(['view', 'show', 'destroy']);
