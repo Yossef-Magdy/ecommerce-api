@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Google\Client as GoogleClient;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -109,10 +110,10 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
-    function logout(Request $request)
+    function logout()
     {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logout successful']);
+        Auth::user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out successfully, see you soon']);
     }
     function me(Request $request)
     {
