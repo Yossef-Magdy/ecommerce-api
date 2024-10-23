@@ -3,6 +3,7 @@
 namespace App\Models\Core;
 
 use App\Models\Orders\Order;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -41,5 +42,19 @@ class Coupon extends Model
     public function isUsed(): bool
     {
         return $this->uses_count === 0;
+    }
+
+    public function updateStatus() {
+        $active = Carbon::make($this->expiry_date)->gt(Carbon::now());
+        $available = $this->uses_count > 0;
+        if ($active && $available) {
+            if ($this->status == 'expired') {
+                $this->update(['status' => 'active']);
+            }
+        } else {
+            if ($this->status == 'active') {
+                $this->update(['status' => 'expired']);
+            }
+        }
     }
 }
