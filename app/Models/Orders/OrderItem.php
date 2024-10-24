@@ -28,6 +28,6 @@ class OrderItem extends Model
 
     public function productDetail(): BelongsTo
     {
-        return $this->belongsTo(ProductDetail::class, 'product_detail_id', 'id')->withTrashed();;
+        return $this->belongsTo(ProductDetail::class, 'product_detail_id', 'id')->withTrashed();
     }
 }

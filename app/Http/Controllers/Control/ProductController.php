@@ -16,16 +16,19 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    function __construct() {
+    function __construct()
+    {
         $this->modelName = "product";
         $this->authorizeResource(Product::class, 'product');
     }
 
-    public function index() {
+    public function index()
+    {
         return ProductResource::collection(Product::with(['discount', 'categories:id,name', 'details:product_id,stock'])->paginate(10));
     }
 
-    public function show(Product $product) {
+    public function show(Product $product)
+    {
         return ProductDetailsResource::make($product);
     }
 
@@ -67,7 +70,7 @@ class ProductController extends Controller
             }
 
             $product->update($request->except(['cover_image', 'product_images']));
-            
+
             // Edit product categories and subcategories
             $product->categories()->sync($request['categories']);
             $product->subcategories()->sync($request['subcategories']);
@@ -100,9 +103,9 @@ class ProductController extends Controller
                     Storage::disk('product_images')->delete($image->image_url);
                 }
             }
-            if ($product->cover_image !== 'default.png') {
-                Storage::disk('product_cover')->delete($product->cover_image);
-            }
+            // if ($product->cover_image !== 'default.png') {
+            //     Storage::disk('product_cover')->delete($product->cover_image);
+            // }
             $product->delete();
             DB::commit();
         } catch (Exception $errors) {
