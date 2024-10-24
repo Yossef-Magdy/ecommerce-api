@@ -34,7 +34,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/auth/callback/google', [AuthController::class, 'google']);
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
 
 Route::apiResource('/products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('/product-details', ProductDetailController::class)->only(['index', 'show']);
@@ -50,6 +49,7 @@ Route::get('/collections/{category}', [CollectionController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
 
     Route::prefix('control')->group(function () {
         Route::apiResource('/users', UserController::class);
