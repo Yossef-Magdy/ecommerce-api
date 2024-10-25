@@ -49,7 +49,8 @@ Route::get('/collections/{category}', [CollectionController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::put('/change-password', [AuthController::class, 'changePassword']);
+    Route::put('/change-name', [AuthController::class, 'changeName']);
 
     Route::prefix('control')->group(function () {
         Route::apiResource('/users', UserController::class);
