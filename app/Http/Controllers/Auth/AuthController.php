@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ChangePasswordRequest;
+use App\Http\Requests\Auth\ChangeNameRequest;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\LoginGoogleRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -145,5 +146,10 @@ class AuthController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
         return response()->json(['message' => 'password updated successfully'], 200);
+    }
+    function changeName(ChangeNameRequest $request) {
+        $user = Auth::user();
+        $user->update($request->validated());
+        return response()->json(['message' => 'name updated successfully'], 200);
     }
 }
