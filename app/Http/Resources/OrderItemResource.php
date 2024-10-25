@@ -20,15 +20,16 @@ class OrderItemResource extends JsonResource
             'color' => $this->productDetail->color,
             'material' => $this->productDetail->material,
             'quantity' => $this->quantity,
-            'price' => (double) $this->productDetail->price,
-            'total_price' => (double) $this->total_price,
+            'price' => (float) $this->productDetail->price,
+            'total_price' => (float) $this->total_price,
+            'discount' => $this->discount,
             'product' => [
                 'product_detail_id' => $this->productDetail->id,
                 'product_id' => $this->productDetail->product->id,
                 'name' => $this->productDetail->product->name,
                 'description' => $this->productDetail->product->description,
                 'image' => asset("cover/{$this->productDetail->product->cover_image}"),
-                'price' => (double) $this->productDetail->product->price,
+                'price' => (float) $this->productDetail->product->price,
             ],
         ];
     }

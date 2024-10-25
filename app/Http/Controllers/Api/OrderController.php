@@ -154,17 +154,18 @@ class OrderController extends Controller
 
             if ($item_discount && !$item_discount->isExpired()) {
                 $discount = $this->discountCalculator($item_discount->type, $item_discount->value, $productDetail->price);
-                $productDetail->price -= $discount;
-                $item['discount'] = $discount;
+                $item['discount'] += $discount;
             }
 
-            if ($coupon) {
+            if ($coupon && !$coupon->isExpired()) {
                 $coupon_discount = $this->discountCalculator($coupon->discount_type, $coupon->discount_value, $productDetail->price);
-                $productDetail->price -= $coupon_discount;
                 $item['discount'] += $coupon_discount;
             }
 
+            $productDetail->price -= $item['discount'];
+
             $item['total_price'] = $productDetail->price * $item['quantity'];
+            $item['discount'] *= $item['quantity'];
         }
     }
 
