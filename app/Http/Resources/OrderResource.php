@@ -14,11 +14,7 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $totalOrderPrice = 0;
-
-        foreach ($this->orderItems as $item) {
-            $totalOrderPrice += $item['total_price'];
-        }
+        $totalOrderPrice = $this->orderItems->sum('total_price') + floatval($this->shipping->shippingDetails->governorate->fee);
 
         return [
             'id' => $this->id,
