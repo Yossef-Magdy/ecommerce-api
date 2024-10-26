@@ -86,20 +86,41 @@ class AnalyticsController extends Controller
 
         $analyticsData = $this->getAnalyticsForDays($days);
 
-        $statistics = $analyticsData->map(function ($analytics) {
+        $total = [
+            'orders' => 0,
+            'earning' => 0,
+            'refunded' => 0,
+            'users' => 0,
+        ];
+
+        $analyticsData->each(function ($record) use(&$total) {
+            $total['earning'] += $record->total_earning;
+            $total['orders'] += $record->total_orders;
+            $total['refunded'] += $record->total_refunded;
+            $total['users'] += $record->total_users;
+        });
+
+        $maxEarning = $analyticsData->map(function ($data) {
             return [
-                'date' => $analytics->created_at->toDateString(),
-                'total_orders' => $analytics->total_orders,
-                'total_earning' => (float) $analytics->total_earning,
-                'total_refunded' => (float) $analytics->total_refunded,
-                'total_users' => $analytics->total_users,
-                'last_update' => $analytics->updated_at->diffForHumans(),
+                'total_earning' => $data->total_earning,
+                'date' => $data->created_at->format('Y-m-d'),
             ];
         });
 
+        $number_of_data = 5;
+
+        $maxEarning = $maxEarning->sortByDesc(fn($value) => $value['total_earning'])->take($number_of_data)->values();
+        $bestSeller = OrderItem::select(['product_detail_id', 'quantity'])->with(['productDetail:id,product_id', 'productDetail.product:id,name'])->get();
+        $bestSeller = $bestSeller->groupBy('product_detail_id')->map(function ($group) {
+            return [
+                'quantity' => $group->sum('quantity'),
+                'product' => $group->first()->productDetail->product,
+            ];
+        })->sortByDesc(fn($value) => $value['quantity'])->take($number_of_data)->values();
         return response()->json([
-            'days' => $days,
-            'statistics' => $statistics,
+            'total' => $total,
+            'max_earning' => $maxEarning,
+            'best_seller' => $bestSeller,
         ], 200);
     }
 
