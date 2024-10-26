@@ -29,7 +29,15 @@ class OrderController extends Controller
     public function index()
     {
         return OrderResource::collection(
-            Order::with('orderItems', 'orderCoupon.coupon')
+            Order::with('orderItems', 
+                'orderCoupon.coupon', 
+                'orderItems.productDetail', 
+                'orderItems.productDetail.product',
+                'shipping',
+                'shipping.shippingDetails',
+                'shipping.shippingDetails.governorate',
+                'payment'
+            )
                 ->where('user_id', Auth::id())
                 ->whereHas('shipping', function ($query) {
                     $query->where('status', '!=', 'canceled');
