@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\ProductDetailController;
 use App\Http\Controllers\Api\ShippingDetailsController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\UserReviewsController;
 use App\Http\Controllers\Control\ProductReviewsController as ControlProductReviewsController;
 use App\Http\Controllers\Control\CouponController as ControlCouponController;
 use App\Http\Controllers\Control\GovernorateController as ControlGovernorateController;
@@ -70,11 +71,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/roles', RoleController::class);
         Route::apiResource('/permissions', PermissionController::class)->only(['index', 'show']);
     });
-
+    Route::apiResource('/user-reviews', UserReviewsController::class)->only('index');
     Route::apiResource('/reviews', ProductReviewsController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/shipping-details', ShippingDetailsController::class);
     Route::apiResource('/orders', OrderController::class)->only(['index', 'store', 'show', 'update']);
-
-    // Cart
     Route::apiResource('/cart', CartController::class)->only(['index', 'store']);
 });
