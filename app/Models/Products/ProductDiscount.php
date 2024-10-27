@@ -28,7 +28,7 @@ class ProductDiscount extends Model
 
     public function isExpired(): bool
     {
-        return Carbon::make($this->expiry_date)->gt(Carbon::now());
+        return !Carbon::make($this->expiry_date)->gt(Carbon::now());
     }
 
     // change status to closed before expiry
