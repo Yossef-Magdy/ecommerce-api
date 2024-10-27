@@ -11,9 +11,12 @@ use App\Http\Resources\ProductDetailResource;
 
 class ProductDetailController extends Controller
 {
-    /**
-     * Store a newly created resource in storage.
-     */
+    function __construct()
+    {
+        $this->modelName = "detail";
+        $this->authorizeResource(Product::class, 'product');
+    }
+
     public function store(StoreProductDetailRequest $request)
     {
         $data = $request->validated();
