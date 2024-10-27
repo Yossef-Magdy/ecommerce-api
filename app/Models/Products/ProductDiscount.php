@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,7 +28,7 @@ class ProductDiscount extends Model
 
     public function isExpired(): bool
     {
-        return $this->expiry_date < now();
+        return Carbon::make($this->expiry_date)->gt(Carbon::now());
     }
 
     // change status to closed before expiry

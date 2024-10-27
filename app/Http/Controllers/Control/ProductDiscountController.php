@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Control\StoreProductDiscountRequest;
 use App\Http\Requests\Control\UpdateProductDiscountRequest;
 use App\Http\Resources\Control\DiscountResource;
+use App\Models\Products\Product;
 use App\Models\Products\ProductDiscount;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class ProductDiscountController extends Controller
 {
+    function __construct()
+    {
+        $this->modelName = "discount";
+        $this->authorizeResource(Product::class, 'product');
+    }
+
     public function index()
     {
         return response()->json([
