@@ -105,9 +105,6 @@ class AuthController extends Controller
 
     function register(RegisterRequest $request)
     {
-        if (User::where('email', $request->email)->exists()) {
-            return response()->json(['message' => 'User already exists'], 409);
-        }
         $user = User::create($request->validated());
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
