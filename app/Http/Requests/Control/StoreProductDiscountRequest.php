@@ -23,7 +23,7 @@ class StoreProductDiscountRequest extends FormRequest
     {
         return [
             'status' => ['in:active,closed'],
-            'expiry_date' => ['date'],
+            'expiry_date' => ['date', 'after_or_equal:today'],
             'type' => ['required', 'in:fixed,percentage'],
             'value' => ['required', 'numeric'],
             'product_id' => ['required', 'exists:products,id']
@@ -39,6 +39,7 @@ class StoreProductDiscountRequest extends FormRequest
             'product_id.exists:products,id' => 'Product not found',
             'status.in' => 'Status must be one of: active, closed',
             'expiry_date.date' => 'Expire date must be a date',
+            'expiry_date.after_or_equal' => 'Expiry date must be today or a future date',
         ];
     }
 }
