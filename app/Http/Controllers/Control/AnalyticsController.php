@@ -110,10 +110,12 @@ class AnalyticsController extends Controller
         $number_of_data = 5;
 
         $maxEarning = $maxEarning->sortByDesc(fn($value) => $value['total_earning'])->take($number_of_data)->values();
-        $bestSeller = OrderItem::select(['product_detail_id', 'quantity'])->with(['productDetail:id,product_id', 'productDetail.product:id,name'])->get();
+        $bestSeller = OrderItem::select(['product_detail_id', 'quantity'])->with(['productDetail:id,product_id,color,material', 'productDetail.product:id,name'])->get();
         $bestSeller = $bestSeller->groupBy('product_detail_id')->map(function ($group) {
             return [
                 'quantity' => $group->sum('quantity'),
+                'color' => $group->first()->productDetail->color,
+                'material' => $group->first()->productDetail->material,
                 'product' => $group->first()->productDetail->product,
             ];
         })->sortByDesc(fn($value) => $value['quantity'])->take($number_of_data)->values();
